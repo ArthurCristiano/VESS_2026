@@ -1,6 +1,7 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.service;
 
 import br.edu.utfpr.pb.pw45s.projetofinal.model.User;
+import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserProfile;
 import br.edu.utfpr.pb.pw45s.projetofinal.repository.UserRepository;
 import br.edu.utfpr.pb.pw45s.projetofinal.shared.CrudService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,15 @@ public class UserService extends CrudService<Long, User, UserRepository> impleme
 
     @Override
     public User save(User user) {
+        if (user.getId() != null) {
+            repository.findById(user.getId()).ifPresent(existing -> {
+                if (user.getProfile() == null) {
+                    user.setProfile(existing.getProfile());
+                }
+            });
+        } else if (user.getProfile() == null) {
+            user.setProfile(UserProfile.PESQUISADOR);
+        }
         if (!user.getPassword().startsWith("$2a$")) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
