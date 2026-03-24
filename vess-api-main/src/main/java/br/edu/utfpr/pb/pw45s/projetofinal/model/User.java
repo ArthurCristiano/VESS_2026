@@ -1,11 +1,13 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.model;
 
+import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserProfile;
 import br.edu.utfpr.pb.pw45s.projetofinal.shared.Identifiable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import br.edu.utfpr.pb.pw45s.projetofinal.security.SecurityConstants;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,15 +58,19 @@ public class User implements UserDetails, Identifiable<Long> {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$")
     private String password;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean isAdmin = false;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 32)
+    private UserProfile profile = UserProfile.PESQUISADOR;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        if (this.isAdmin) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        authorities.add(new SimpleGrantedAuthority(SecurityConstants.ROLE_USER));
+        switch (profile) {
+            case ADMINISTRADOR ->
+                    authorities.add(new SimpleGrantedAuthority(SecurityConstants.ROLE_ADMINISTRADOR));
+            case PESQUISADOR ->
+                    authorities.add(new SimpleGrantedAuthority(SecurityConstants.ROLE_PESQUISADOR));
         }
         return authorities;
     }

@@ -1,10 +1,10 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.dto;
 
+import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserProfile;
 import br.edu.utfpr.pb.pw45s.projetofinal.validator.ValidUser;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,7 +44,11 @@ public class UserDTO {
     @Size(min = 2, max = 50, message = "A cidade deve ter entre 2 e 50 caracteres.")
     private String city;
 
-    private boolean isAdmin;
+    private UserProfile profile;
+
+    public boolean isAdmin() {
+        return profile == UserProfile.ADMINISTRADOR;
+    }
 
     public UserDTO(Long id) {
         this.id = id;

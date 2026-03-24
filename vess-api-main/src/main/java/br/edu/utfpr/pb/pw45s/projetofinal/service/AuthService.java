@@ -2,6 +2,7 @@ package br.edu.utfpr.pb.pw45s.projetofinal.service;
 
 import br.edu.utfpr.pb.pw45s.projetofinal.dto.UserSignupDTO;
 import br.edu.utfpr.pb.pw45s.projetofinal.model.User;
+import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserProfile;
 import br.edu.utfpr.pb.pw45s.projetofinal.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class AuthService {
         user.setCountry(signupDTO.country());
         user.setState(signupDTO.state());
         user.setCity(signupDTO.city());
+        user.setProfile(UserProfile.PESQUISADOR);
 
         userRepository.save(user);
     }
