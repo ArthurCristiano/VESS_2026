@@ -1,6 +1,7 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.dto;
 
 import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserProfile;
+import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserStatus;
 import br.edu.utfpr.pb.pw45s.projetofinal.validator.ValidUser;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +17,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-
 
     private Long id;
 
@@ -45,6 +45,8 @@ public class UserDTO {
     private String city;
 
     private UserProfile profile;
+
+    private UserStatus status;
 
     public boolean isAdmin() {
         return profile == UserProfile.ADMINISTRADOR;
