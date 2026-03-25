@@ -61,6 +61,7 @@ public class WebSecurity {
                         .requestMatchers(HttpMethod.POST, "/amostra").permitAll()
                         .requestMatchers(HttpMethod.POST, "/camada").permitAll()
 
+                        .requestMatchers("/users", "/users/**").hasRole("ADMINISTRADOR")
                         .anyRequest().authenticated()
                 )
 
