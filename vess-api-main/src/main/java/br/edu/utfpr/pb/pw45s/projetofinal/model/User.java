@@ -1,6 +1,7 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.model;
 
 import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserProfile;
+import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserStatus;
 import br.edu.utfpr.pb.pw45s.projetofinal.shared.Identifiable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -62,6 +63,10 @@ public class User implements UserDetails, Identifiable<Long> {
     @Column(nullable = false, length = 32)
     private UserProfile profile = UserProfile.PESQUISADOR;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20, columnDefinition = "varchar(20) default 'PENDENTE_EMAIL'")
+    private UserStatus status = UserStatus.PENDENTE_EMAIL;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -73,5 +78,25 @@ public class User implements UserDetails, Identifiable<Long> {
                     authorities.add(new SimpleGrantedAuthority(SecurityConstants.ROLE_PESQUISADOR));
         }
         return authorities;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserStatus.ATIVO.equals(this.status);
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !UserStatus.INATIVO.equals(this.status);
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 }

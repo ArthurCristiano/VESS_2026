@@ -2,6 +2,7 @@ package br.edu.utfpr.pb.pw45s.projetofinal.dto;
 
 import br.edu.utfpr.pb.pw45s.projetofinal.model.User;
 import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserProfile;
+import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,17 +21,18 @@ public class UserResponseDTO {
     private String displayName;
     private String username;
     private String profile;
+    private String status;
     private boolean admin;
     private Set<AuthorityResponseDTO> authorities;
 
     public UserResponseDTO(User user) {
         this.username = user.getUsername();
         this.profile = user.getProfile() != null ? user.getProfile().name() : null;
+        this.status = user.getStatus() != null ? user.getStatus().name() : null;
         this.admin = user.getProfile() == UserProfile.ADMINISTRADOR;
         this.authorities = new HashSet<>();
-        for (GrantedAuthority authority: user.getAuthorities()) {
-            authorities.add( new AuthorityResponseDTO(authority.getAuthority()));
+        for (GrantedAuthority authority : user.getAuthorities()) {
+            authorities.add(new AuthorityResponseDTO(authority.getAuthority()));
         }
     }
-
 }
