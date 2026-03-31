@@ -12,4 +12,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+/** Mensagem do corpo JSON do backend (ex.: /auth/login — campo `mensagem`). */
+export function getBackendErrorMessage(error: unknown): string | undefined {
+  if (!axios.isAxiosError(error)) return undefined;
+  const data = error.response?.data;
+  if (data && typeof data === "object" && "mensagem" in data) {
+    const msg = (data as { mensagem?: unknown }).mensagem;
+    if (typeof msg === "string" && msg.trim()) return msg;
+  }
+  return undefined;
+}
+
 export default api;
