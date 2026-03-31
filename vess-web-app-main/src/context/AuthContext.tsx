@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import api from "../services/api";
 import { User } from "../services/AuthService";
-import axios from 'axios';
 
 type RegisterData = {
   username: string;

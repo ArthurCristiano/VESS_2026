@@ -6,6 +6,7 @@ import Input from "./input/InputField";
 import Checkbox from "./input/Checkbox";
 import Button from "../ui/button/Button";
 import { useAuth } from "../../context/AuthContext";
+import { getBackendErrorMessage } from "../../services/api";
 
 export default function SignInForm() {
   const { loginUser } = useAuth();
@@ -28,9 +29,12 @@ export default function SignInForm() {
     try {
       await loginUser(email, password);
       navigate("/mapa");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError("Email ou senha incorretos.");
+      setError(
+        getBackendErrorMessage(err) ??
+          "Não foi possível entrar. Verifique sua conexão e tente novamente."
+      );
     } finally {
       setLoading(false);
     }
