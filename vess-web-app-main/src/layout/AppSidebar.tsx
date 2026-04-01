@@ -29,11 +29,11 @@ const navItems: NavItem[] = [
     name: "Relatório de Localizações",
     path: "/relatorio-localizacao",
   },
-  {
+/*  {
     icon: <UsersIcon />,
     name: "Relatório de Pessoas",
     path: "/relatorio-pessoas",
-  },
+  },*/
   {
     icon: <UsersIcon />,
     name: "Relatório de Usuarios",
