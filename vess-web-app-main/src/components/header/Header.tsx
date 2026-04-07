@@ -4,6 +4,10 @@ import NotificationDropdown from "./NotificationDropdown";
 import UserDropdown from "./UserDropdown";
 import { Link } from "react-router";
 import { Menu, X, MoreVertical, Search } from "lucide-react";
+// @ts-ignore: allow importing image without module declarations
+import logoLight from "../../assets/utfpr_img.png";
+// @ts-ignore: allow importing image without module declarations
+import logoDark from "../../assets/utfpr_dark_img.png";
 
 interface HeaderProps {
   onClick?: () => void;
@@ -37,12 +41,12 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
           <Link to="/" className="lg:hidden">
             <img
               className="dark:hidden"
-              src="./images/logo/logo.svg"
+              src={logoLight}
               alt="Logo"
             />
             <img
               className="hidden dark:block"
-              src="./images/logo/logo-dark.svg"
+              src={logoDark}
               alt="Logo"
             />
           </Link>
