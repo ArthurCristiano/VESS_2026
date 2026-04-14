@@ -53,6 +53,7 @@ public class WebSecurity {
 
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/confirm-email").permitAll()
                         .requestMatchers(HttpMethod.POST, "/avaliacao").permitAll()
                         .requestMatchers(HttpMethod.POST, "/configuracao").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/configuracao/**").permitAll()
