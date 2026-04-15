@@ -10,12 +10,10 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import axios from "axios";
 import { User } from "../../services/AuthService";
-import { useRoles } from "../../hooks/useRoles";
 
 export default function UserInfoCard() {
   const { user, updateUserContext, loading: authLoading } = useAuth();
   const { isOpen, openModal, closeModal } = useModal();
-  const { isAdmin } = useRoles();
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editedUser, setEditedUser] = useState<Partial<User>>({});
@@ -111,7 +109,7 @@ export default function UserInfoCard() {
             </div>
           </div>
         </div>
-          <Button
+        <Button
           onClick={openModal}
           className="flex w-full items-center justify-center gap-2 lg:inline-flex lg:w-auto mt-4 lg:mt-0"
           variant="outline"
