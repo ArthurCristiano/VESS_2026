@@ -111,16 +111,14 @@ export default function UserInfoCard() {
             </div>
           </div>
         </div>
-        {isAdmin && (
           <Button
-            onClick={openModal}
-            className="flex w-full items-center justify-center gap-2 lg:inline-flex lg:w-auto mt-4 lg:mt-0"
-            variant="outline"
-            size="sm"
-          >
-            Editar
-          </Button>
-        )}
+          onClick={openModal}
+          className="flex w-full items-center justify-center gap-2 lg:inline-flex lg:w-auto mt-4 lg:mt-0"
+          variant="outline"
+          size="sm"
+        >
+          Editar
+        </Button>
       </div>
 
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] w-full m-4">
