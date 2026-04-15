@@ -67,6 +67,7 @@ public class WebSecurity {
 
                         .requestMatchers(HttpMethod.GET, "/users/me").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/me").authenticated()
+
                         .requestMatchers("/users", "/users/**").hasRole("ADMINISTRADOR")
                         .anyRequest().authenticated()
                 )
