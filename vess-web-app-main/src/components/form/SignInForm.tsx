@@ -103,10 +103,10 @@ export default function SignInForm() {
                     </span>
                   </div>
                   <Link
-                    to="/reset-password"
+                    to="/recuperar-senha"
                     className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
                   >
-                    Esqueceu a senha?
+                    Esqueci minha senha
                   </Link>
                 </div>
 

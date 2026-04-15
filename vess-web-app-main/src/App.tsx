@@ -1,7 +1,9 @@
-import React from "react";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
+import ForgotPassword from "./pages/AuthPages/ForgotPassword";
+import ResetPassword from "./pages/AuthPages/ResetPassword";
 import UserConfigReport from "./components/dashboard/UserConfigReport";
 import UserReport from "./components/dashboard/UserReport";
 import AppLayout from "./layout/AppLayout";
@@ -21,6 +23,8 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<SignIn />} />
             <Route path="/cadastro" element={<SignUp />} />
+            <Route path="/recuperar-senha" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
