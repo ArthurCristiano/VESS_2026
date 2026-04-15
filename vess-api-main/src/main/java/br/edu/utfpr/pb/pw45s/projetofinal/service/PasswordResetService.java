@@ -52,6 +52,7 @@ public class PasswordResetService {
         User user = optionalUser.get();
 
         tokenRepository.deleteByUser(user);
+        tokenRepository.flush();
 
         String tokenValue = UUID.randomUUID().toString().replace("-", "");
         PasswordResetToken resetToken = new PasswordResetToken(tokenValue, user);
@@ -107,8 +108,7 @@ public class PasswordResetService {
     }
 
     private void sendResetEmail(User user, String tokenValue) {
-        String resetLink = frontendUrl + "/auth/reset-password?token=" + tokenValue;
-
+    String resetLink = frontendUrl + "/reset-password?token=" + tokenValue;
         String html = """
                 <html>
                 <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
