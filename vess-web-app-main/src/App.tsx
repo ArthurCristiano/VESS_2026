@@ -9,7 +9,6 @@ import UserReport from "./components/dashboard/UserReport";
 import AppLayout from "./layout/AppLayout";
 import MapPage from "./pages/map/MapPage";
 import LocationReport from "./components/dashboard/LocationReport";
-import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import UserProfiles from "./pages/UserProfiles";
@@ -17,10 +16,9 @@ import { SidebarProvider } from "./context/SidebarContext";
 
 export default function App() {
   return (
-    <AuthProvider>
-      <SidebarProvider>
-        <BrowserRouter>
-          <Routes>
+    <SidebarProvider>
+      <BrowserRouter>
+        <Routes>
             <Route path="/login" element={<SignIn />} />
             <Route path="/cadastro" element={<SignUp />} />
             <Route path="/recuperar-senha" element={<ForgotPassword />} />
@@ -48,9 +46,8 @@ export default function App() {
             </Route>
             <Route path="*" element={<div className="p-10 text-center">Página não encontrada (404)</div>} />
 
-          </Routes>
-        </BrowserRouter>
-      </SidebarProvider>
-    </AuthProvider>
+        </Routes>
+      </BrowserRouter>
+    </SidebarProvider>
   );
 }

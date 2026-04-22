@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import api from "../../services/api";
+import api, { getBackendErrorMessage } from "../../services/api";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
@@ -10,27 +10,47 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import axios from "axios";
 import { User } from "../../services/AuthService";
+import { useNavigate } from "react-router-dom";
+import { EyeClosed, EyeIcon } from "lucide-react";
 
-export default function UserInfoCard() {
-  const { user, updateUserContext, loading: authLoading } = useAuth();
+const UserInfoCard: React.FC = () => {
+  const { user, updateUserContext, logoutUser, loading: authLoading } = useAuth();
   const { isOpen, openModal, closeModal } = useModal();
+  const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editedUser, setEditedUser] = useState<Partial<User>>({});
 
-  useEffect(() => {
-    if (user && isOpen) {
-      setEditedUser({
-        username: user.username || "",
-        email: user.email || "",
-        password: "",
-        institution: user.institution || "",
-        country: user.country || "",
-        state: user.state || "",
-        city: user.city || "",
-      });
+  const fillFormFromUser = (profileUser: Partial<User>) => {
+    setEditedUser({
+      username: profileUser.username || "",
+      email: profileUser.email || "",
+      password: "",
+      institution: profileUser.institution || "",
+      country: profileUser.country || "",
+      state: profileUser.state || "",
+      city: profileUser.city || "",
+    });
+  };
+
+  const normalizeUserPayload = (payload: unknown): Partial<User> | null => {
+    if (!payload || typeof payload !== "object") return null;
+
+    if ("user" in payload && payload.user && typeof payload.user === "object") {
+      return payload.user as Partial<User>;
     }
-  }, [user, isOpen]);
+
+    return payload as Partial<User>;
+  };
+
+  useEffect(() => {
+    if (isOpen && user) {
+      setError(null);
+      setShowPassword(false);
+      fillFormFromUser(user);
+    }
+  }, [isOpen, user]);
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -42,25 +62,53 @@ export default function UserInfoCard() {
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!user) return;
+
+    const previousEmail = user.email || "";
+    const previousUsername = user.username || "";
+
     setIsSaving(true);
     setError(null);
     try {
-      const response = await api.put("/users/me", editedUser);
-      updateUserContext(response.data);
+      const payload = {
+        username: editedUser.username || "",
+        email: editedUser.email || "",
+        institution: editedUser.institution || "",
+        country: editedUser.country || "",
+        state: editedUser.state || "",
+        city: editedUser.city || "",
+        password: editedUser.password || "",
+      };
+
+      const response = await api.put("/users/me", payload);
+      const updatedUser = normalizeUserPayload(response.data) ?? payload;
+
+      const updatedEmail = String(updatedUser.email ?? payload.email ?? "");
+      const updatedUsername = String(updatedUser.username ?? payload.username ?? "");
+      const requiresRelogin =
+        updatedEmail !== previousEmail || updatedUsername !== previousUsername;
+
+      updateUserContext(updatedUser);
+      fillFormFromUser(updatedUser);
       closeModal();
+
+      if (requiresRelogin) {
+        logoutUser();
+        navigate("/login", {
+          state: {
+            message:
+              "Dados de acesso atualizados. Faça login novamente para continuar.",
+          },
+        });
+      }
     } catch (err: any) {
       let finalErrorMessage = "Não foi possível salvar as alterações. Tente novamente.";
-      if (axios.isAxiosError(err) && err.response?.data) {
-        const errorData = err.response.data;
-        if (typeof errorData === "string") finalErrorMessage = errorData;
-        else if (typeof errorData === "object" && errorData.message) finalErrorMessage = errorData.message;
-        else if (typeof errorData === "object" && errorData.errors && Array.isArray(errorData.errors)) {
-          finalErrorMessage = errorData.errors.map((e: any) => e.defaultMessage || e.message || "Erro de validação").join("; ");
-        } else if (err.response?.status === 404) {
-          finalErrorMessage = "Endpoint de atualização não encontrado no servidor.";
-        } else if (err.response?.status === 401 || err.response?.status === 403) {
-          finalErrorMessage = "Você não tem permissão para realizar esta ação.";
-        }
+      if (axios.isAxiosError(err)) {
+        finalErrorMessage = getBackendErrorMessage(err) ??
+          (err.response?.status === 404
+            ? "Endpoint de atualização não encontrado no servidor."
+            : err.response?.status === 401 || err.response?.status === 403
+              ? "Você não tem permissão para realizar esta ação."
+              : finalErrorMessage);
       }
       setError(finalErrorMessage);
     } finally {
@@ -121,7 +169,7 @@ export default function UserInfoCard() {
 
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] w-full m-4">
         <div className="relative w-full overflow-y-auto rounded-xl bg-white p-6 dark:bg-gray-900 lg:p-8">
-          <button onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10">
+          <button type="button" onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10">
             &times;
           </button>
           <div className="pr-10">
@@ -156,14 +204,28 @@ export default function UserInfoCard() {
               </div>
               <div className="col-span-2 lg:col-span-1">
                 <Label htmlFor="edit-password">Nova Senha (opcional)</Label>
-                <Input
-                  id="edit-password"
-                  name="password"
-                  type="password"
-                  placeholder="Deixe em branco para manter a atual"
-                  value={editedUser.password || ""}
-                  onChange={handleInputChange}
-                />
+                <div className="relative">
+                  <Input
+                    id="edit-password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Deixe em branco para manter a atual"
+                    value={editedUser.password || ""}
+                    onChange={handleInputChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  >
+                    {showPassword ? (
+                      <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                    ) : (
+                      <EyeClosed className="fill-gray-500 dark:fill-gray-400 size-5" />
+                    )}
+                  </button>
+                </div>
               </div>
               <div className="col-span-2 lg:col-span-1">
                 <Label htmlFor="edit-institution">Instituição</Label>
@@ -208,16 +270,26 @@ export default function UserInfoCard() {
             </div>
             {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
             <div className="flex items-center gap-3 mt-6 lg:justify-end">
-              <Button size="sm" variant="outline" onClick={closeModal}>
+              <button
+                type="button"
+                onClick={closeModal}
+                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
+              >
                 Cancelar
-              </Button>
-              <Button size="sm" disabled={isSaving}>
+              </button>
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 disabled:cursor-not-allowed"
+              >
                 {isSaving ? "Salvando..." : "Salvar Alterações"}
-              </Button>
+              </button>
             </div>
           </form>
         </div>
       </Modal>
     </div>
   );
-}
+};
+
+export default UserInfoCard;

@@ -1,16 +1,15 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.controller;
 
+import br.edu.utfpr.pb.pw45s.projetofinal.dto.UserMeDTO;
 import br.edu.utfpr.pb.pw45s.projetofinal.dto.UserDTO;
 import br.edu.utfpr.pb.pw45s.projetofinal.model.User;
 import br.edu.utfpr.pb.pw45s.projetofinal.repository.UserRepository;
 import br.edu.utfpr.pb.pw45s.projetofinal.service.UserService;
 import br.edu.utfpr.pb.pw45s.projetofinal.shared.CrudController;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("users")
@@ -37,15 +36,8 @@ public class UserController extends CrudController<Long, User, UserDTO, UserRepo
     }
 
     @PutMapping("/me")
-    public UserDTO updateCurrentUser(@AuthenticationPrincipal User currentUser, @RequestBody UserDTO dto) {
-        currentUser.setUsername(dto.getUsername());
-        currentUser.setEmail(dto.getEmail());
-        currentUser.setInstitution(dto.getInstitution());
-        currentUser.setCountry(dto.getCountry());
-        currentUser.setState(dto.getState());
-        currentUser.setCity(dto.getCity());
-
-        User saved = service.save(currentUser);
+    public UserDTO updateCurrentUser(@AuthenticationPrincipal User currentUser, @Valid @RequestBody UserMeDTO dto) {
+        User saved = service.updateCurrentUser(currentUser.getId(), dto);
         return toDto(saved);
     }
 

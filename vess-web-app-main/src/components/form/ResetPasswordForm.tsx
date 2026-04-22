@@ -101,7 +101,7 @@ export default function ResetPasswordForm() {
             {error && <p className="text-sm text-error-500">{error}</p>}
             {message && <p className="text-sm text-green-500">{message}</p>}
             <div>
-              <Button className="w-full" size="sm" disabled={loading}>
+              <Button type="submit" className="w-full" size="sm" disabled={loading}>
                 {loading ? "Redefinindo..." : "Redefinir senha"}
               </Button>
             </div>

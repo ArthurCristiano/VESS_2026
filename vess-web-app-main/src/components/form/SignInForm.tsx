@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ChevronLeftIcon, EyeClosed, EyeIcon } from "lucide-react";
+import { EyeClosed, EyeIcon } from "lucide-react";
 import Label from "./Label";
 import Input from "./input/InputField";
 import Checkbox from "./input/Checkbox";
@@ -113,7 +113,7 @@ export default function SignInForm() {
                 {error && <p className="text-sm text-error-500">{error}</p>}
 
                 <div>
-                  <Button className="w-full" size="sm" disabled={loading}>
+                  <Button type="submit" className="w-full" size="sm" disabled={loading}>
                     {loading ? "Entrando..." : "Entrar"}
                   </Button>
                 </div>
