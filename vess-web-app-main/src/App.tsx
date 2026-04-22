@@ -4,6 +4,7 @@ import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import ForgotPassword from "./pages/AuthPages/ForgotPassword";
 import ResetPassword from "./pages/AuthPages/ResetPassword";
+import ConfirmEmail from "./pages/AuthPages/ConfirmEmail";
 import UserConfigReport from "./components/dashboard/UserConfigReport";
 import UserReport from "./components/dashboard/UserReport";
 import AppLayout from "./layout/AppLayout";
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/cadastro" element={<SignUp />} />
             <Route path="/recuperar-senha" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/confirm-email" element={<ConfirmEmail />} />
 
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>

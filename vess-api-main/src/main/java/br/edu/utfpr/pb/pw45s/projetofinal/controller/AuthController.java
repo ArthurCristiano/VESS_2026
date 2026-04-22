@@ -1,5 +1,6 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.controller;
 
+import br.edu.utfpr.pb.pw45s.projetofinal.dto.EmailConfirmationResultDTO;
 import br.edu.utfpr.pb.pw45s.projetofinal.dto.UserSignupDTO;
 import br.edu.utfpr.pb.pw45s.projetofinal.service.AuthService;
 import br.edu.utfpr.pb.pw45s.projetofinal.service.EmailConfirmationService;
@@ -47,6 +48,24 @@ public class AuthController {
             return ResponseEntity.ok("E-mail confirmado com sucesso para " + user.getEmail() + "!");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/confirm-email/verify")
+    public ResponseEntity<EmailConfirmationResultDTO> verifyEmailConfirmation(@RequestParam String token) {
+        try {
+            var user = emailConfirmationService.confirmEmail(token);
+            return ResponseEntity.ok(new EmailConfirmationResultDTO(
+                    true,
+                    "E-mail confirmado com sucesso.",
+                    user.getEmail()
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new EmailConfirmationResultDTO(
+                    false,
+                    e.getMessage(),
+                    null
+            ));
         }
     }
 }

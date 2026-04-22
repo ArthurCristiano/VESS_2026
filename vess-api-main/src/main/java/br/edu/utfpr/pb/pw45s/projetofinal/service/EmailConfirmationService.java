@@ -6,6 +6,7 @@ import br.edu.utfpr.pb.pw45s.projetofinal.model.User;
 import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserStatus;
 import br.edu.utfpr.pb.pw45s.projetofinal.repository.EmailConfirmationTokenRepository;
 import br.edu.utfpr.pb.pw45s.projetofinal.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -24,6 +25,9 @@ public class EmailConfirmationService {
     private final EmailConfirmationTokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+
+    @Value("${app.frontend-url:}")
+    private String frontendUrl;
 
     public EmailConfirmationService(EmailConfirmationTokenRepository tokenRepository,
                                     UserRepository userRepository,
@@ -48,11 +52,7 @@ public class EmailConfirmationService {
         token.setExpiresAt(now.plus(TOKEN_EXPIRATION));
         tokenRepository.save(token);
 
-        String confirmationLink = UriComponentsBuilder
-                .fromUriString(baseUrl.trim())
-                .path("/auth/confirm-email")
-                .queryParam("token", tokenValue)
-                .toUriString();
+        String confirmationLink = buildConfirmationLink(baseUrl, tokenValue);
 
         String subject = "Confirme seu e-mail";
         String htmlContent = buildEmailContent(user, confirmationLink);
@@ -114,21 +114,37 @@ public class EmailConfirmationService {
 
         return """
                 <html>
-                  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937;">
-                    <p>Olá, %s!</p>
-                    <p>Seu cadastro foi realizado com sucesso. Para ativar sua conta, confirme seu e-mail clicando no botão abaixo:</p>
-                    <p>
-                      <a href="%s"
-                         style="display:inline-block;padding:12px 20px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:6px;">
-                        Confirmar e-mail
-                      </a>
-                    </p>
-                    <p>Se o botão não funcionar, copie e cole este link no navegador:</p>
-                    <p><a href="%s">%s</a></p>
-                    <p>Esse link expira em 24 horas.</p>
+                <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
+                  <h2>Confirmação de e-mail</h2>
+                  <p>Olá, <strong>%s</strong>.</p>
+                  <p>Seu cadastro no VESS foi realizado com sucesso.</p>
+                  <p>Para ativar sua conta, clique no botão abaixo para confirmar seu e-mail.</p>
+                  <p style="margin: 32px 0;">
+                    <a href="%s"
+                       style="background-color:#1D9E75; color:#fff; padding:12px 24px;
+                              text-decoration:none; border-radius:6px; font-size:15px;">
+                      Confirmar e-mail
+                    </a>
+                  </p>
+                  <p>Se o botão não funcionar, copie e cole este link no navegador:</p>
+                  <p><a href="%s">%s</a></p>
+                  <p>Esse link expira em 24 horas.</p>
+                  <hr style="border:none; border-top:1px solid #eee; margin-top:40px;">
+                  <p style="font-size:12px; color:#999;">VESS — Sistema de Avaliação Visual da Estrutura do Solo</p>
                   </body>
                 </html>
                 """.formatted(displayName, confirmationLink, confirmationLink, confirmationLink);
+    }
+
+    private String buildConfirmationLink(String baseUrl, String tokenValue) {
+        String targetBaseUrl = StringUtils.hasText(frontendUrl) ? frontendUrl.trim() : baseUrl.trim();
+        String targetPath = StringUtils.hasText(frontendUrl) ? "/confirm-email" : "/auth/confirm-email";
+
+        return UriComponentsBuilder
+                .fromUriString(targetBaseUrl)
+                .path(targetPath)
+                .queryParam("token", tokenValue)
+                .toUriString();
     }
 }
 

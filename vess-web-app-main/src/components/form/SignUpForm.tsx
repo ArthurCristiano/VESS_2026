@@ -49,7 +49,7 @@ export default function SignUpForm() {
 
     try {
       await registerUser(formData);
-      alert("Cadastro realizado com sucesso! Você será redirecionado para o login.");
+      alert("Verifique a caixa de entrada do seu e-mail e acesse o link para confirmar o seu cadastro.");
       navigate("/login");
     } catch (err: any) {
       console.error("Erro no cadastro:", err);

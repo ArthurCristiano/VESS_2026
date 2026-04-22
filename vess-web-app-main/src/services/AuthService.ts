@@ -17,6 +17,12 @@ export interface LoginResponse {
   user: User;
 }
 
+export interface ConfirmEmailResponse {
+  success: boolean;
+  message: string;
+  email: string | null;
+}
+
 export async function login(username: string, password: string): Promise<LoginResponse> {
   const { data } = await api.post<LoginResponse>("/auth/login", { username, password });
   return data;
@@ -43,3 +49,11 @@ export async function validateResetToken(token: string): Promise<void> {
 export async function resetPassword(token: string, newPassword: string): Promise<void> {
   await api.post("/auth/reset-password", { token, newPassword });
 }
+
+export async function verifyConfirmEmailToken(token: string): Promise<ConfirmEmailResponse> {
+  const { data } = await api.get<ConfirmEmailResponse>("/auth/confirm-email/verify", {
+    params: { token },
+  });
+  return data;
+}
+
