@@ -1,7 +1,10 @@
 import UserInfoCard from "../components/UserProfile/UserInfoCard";
 import PageMeta from '../components/common/PageMeta';
+import { useAuth } from "../context/AuthContext";
 
 export default function UserProfiles() {
+  const { user, loading } = useAuth();
+
   return (
     <>
       <PageMeta
@@ -13,7 +16,17 @@ export default function UserProfiles() {
           Seu Perfil
         </h3>
         <div className="space-y-6">
-          <UserInfoCard />
+          {loading ? (
+            <div className="p-6 text-sm text-gray-500 dark:text-gray-400">
+              Carregando dados do usuário autenticado...
+            </div>
+          ) : user ? (
+            <UserInfoCard />
+          ) : (
+            <div className="p-6 text-sm text-gray-500 dark:text-gray-400">
+              Usuário autenticado não encontrado.
+            </div>
+          )}
         </div>
       </div>
     </>

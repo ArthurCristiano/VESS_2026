@@ -25,6 +25,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function normalizeUserPayload(payload: unknown): User | null {
+  if (!payload || typeof payload !== "object") return null;
+
+  if ("user" in payload && (payload as { user?: unknown }).user && typeof (payload as { user?: unknown }).user === "object") {
+    return (payload as { user: User }).user;
+  }
+
+  return payload as User;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -37,10 +47,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (storedToken) {
         try {
           api.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
-          const { data: userData } = await api.get('/users/me');
+          const { data: userData } = await api.get("/users/me");
+          const currentUser = normalizeUserPayload(userData);
+
+          if (!currentUser) {
+            localStorage.clear();
+            delete api.defaults.headers.common["Authorization"];
+            setToken(null);
+            setUser(null);
+            setLoading(false);
+            return;
+          }
+
           setToken(storedToken);
-          setUser(userData);
-          localStorage.setItem('user', JSON.stringify(userData));
+          setUser(currentUser);
+          localStorage.setItem("user", JSON.stringify(currentUser));
         } catch (error) {
           console.error("Falha ao validar token, limpando sessão.", error);
           localStorage.clear();
@@ -60,11 +81,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       username: email,
       password,
     });
-    setToken(data.token);
-    setUser(data.user);
+
     api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
+    setToken(data.token);
+
+    const { data: currentUserResponse } = await api.get("/users/me");
+    const currentUser = normalizeUserPayload(currentUserResponse);
+
+    if (!currentUser) {
+      throw new Error("Não foi possível carregar os dados completos do usuário.");
+    }
+
+    setUser(currentUser);
+    localStorage.setItem("user", JSON.stringify(currentUser));
   };
 
   const registerUser = async (userData: RegisterData) => {
