@@ -69,7 +69,14 @@ public class WebSecurity {
                         .requestMatchers(HttpMethod.GET, "/users/me").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/me").authenticated()
 
+                        .requestMatchers(HttpMethod.GET,    "/regioes/**").authenticated()
+                        .requestMatchers(HttpMethod.POST,   "/regioes/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT,    "/regioes/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PATCH,  "/regioes/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/regioes/**").hasRole("ADMINISTRADOR")
+
                         .requestMatchers("/users", "/users/**").hasRole("ADMINISTRADOR")
+
                         .anyRequest().authenticated()
                 )
 
@@ -90,7 +97,7 @@ public class WebSecurity {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8641/", "https://vess.app.pb.utfpr.edu.br/"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Origin"));
         configuration.setExposedHeaders(List.of("Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
