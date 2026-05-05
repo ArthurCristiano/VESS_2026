@@ -4,10 +4,12 @@ import {Dropdown} from "../ui/dropdown/Dropdown";
 import {Link, useNavigate} from "react-router";
 import {ChevronDown, LogOut, UserIcon} from "lucide-react";
 import {useAuth} from "../../context/AuthContext";
+import {useLanguage} from "../../context/LanguageContext";
 
 export default function UserDropdown() {
     const [isOpen, setIsOpen] = useState(false);
     const {user, logoutUser} = useAuth();
+    const {t} = useLanguage();
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -21,7 +23,7 @@ export default function UserDropdown() {
                 to="/login"
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
             >
-                Entrar
+                {t("user.signIn")}
             </Link>
         );
     }
@@ -74,7 +76,7 @@ export default function UserDropdown() {
                                 size={18}
                                 className="text-gray-500 dark:text-gray-400"
                             />
-                            Perfil
+                            {t("user.profile")}
                         </DropdownItem>
                     </li>
                     <li>
@@ -83,7 +85,7 @@ export default function UserDropdown() {
                             className="flex items-center gap-3 px-3 py-2 font-medium text-red-600 rounded-lg group text-theme-sm hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-500/10"
                         >
                             <LogOut size={18}/>
-                            Sair
+                            {t("user.signOut")}
                         </DropdownItem>
                     </li>
                 </ul>

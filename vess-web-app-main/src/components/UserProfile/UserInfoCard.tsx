@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 import api, { getBackendErrorMessage } from "../../services/api";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
@@ -15,6 +16,7 @@ import { EyeClosed, EyeIcon } from "lucide-react";
 
 const UserInfoCard: React.FC = () => {
   const { user, updateUserContext, logoutUser, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const { isOpen, openModal, closeModal } = useModal();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
@@ -52,9 +54,7 @@ const UserInfoCard: React.FC = () => {
     }
   }, [isOpen, user]);
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setEditedUser((prev) => ({ ...prev, [name]: value }));
   };
@@ -84,8 +84,7 @@ const UserInfoCard: React.FC = () => {
 
       const updatedEmail = String(updatedUser.email ?? payload.email ?? "");
       const updatedUsername = String(updatedUser.username ?? payload.username ?? "");
-      const requiresRelogin =
-        updatedEmail !== previousEmail || updatedUsername !== previousUsername;
+      const requiresRelogin = updatedEmail !== previousEmail || updatedUsername !== previousUsername;
 
       updateUserContext(updatedUser);
       fillFormFromUser(updatedUser);
@@ -93,21 +92,17 @@ const UserInfoCard: React.FC = () => {
 
       if (requiresRelogin) {
         logoutUser();
-        navigate("/login", {
-          state: {
-            message:
-              "Dados de acesso atualizados. Faça login novamente para continuar.",
-          },
-        });
+        navigate("/login", { state: { message: t("profile.reloginMessage") } });
       }
     } catch (err: any) {
-      let finalErrorMessage = "Não foi possível salvar as alterações. Tente novamente.";
+      let finalErrorMessage = t("profile.saveError");
       if (axios.isAxiosError(err)) {
-        finalErrorMessage = getBackendErrorMessage(err) ??
+        finalErrorMessage =
+          getBackendErrorMessage(err) ??
           (err.response?.status === 404
-            ? "Endpoint de atualização não encontrado no servidor."
+            ? t("profile.endpointError")
             : err.response?.status === 401 || err.response?.status === 403
-              ? "Você não tem permissão para realizar esta ação."
+              ? t("profile.permissionError")
               : finalErrorMessage);
       }
       setError(finalErrorMessage);
@@ -116,43 +111,39 @@ const UserInfoCard: React.FC = () => {
     }
   };
 
-  if (authLoading) return <div className="text-center p-10">Carregando informações do usuário...</div>;
-  if (!user) return <div className="text-center p-10">Usuário não encontrado ou não logado.</div>;
+  if (authLoading) return <div className="text-center p-10">{t("profile.loading")}</div>;
+  if (!user) return <div className="text-center p-10">{t("profile.notFound")}</div>;
 
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 bg-white dark:bg-gray-800/20">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4 lg:mb-6">
-            Informações do Usuário
+            {t("profile.infoTitle")}
           </h4>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
             <div>
-              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">Nome de Usuário</p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user.username || "-"}
-              </p>
+              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">{t("profile.username")}</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">{user.username || "-"}</p>
             </div>
             <div>
-              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">E-mail</p>
+              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">{t("common.email")}</p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">{user.email || "-"}</p>
             </div>
             <div>
-              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">Instituição</p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user.institution || "-"}
-              </p>
+              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">{t("common.institution")}</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">{user.institution || "-"}</p>
             </div>
             <div>
-              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">País</p>
+              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">{t("common.country")}</p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">{user.country || "-"}</p>
             </div>
             <div>
-              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">Estado</p>
+              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">{t("common.state")}</p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">{user.state || "-"}</p>
             </div>
             <div>
-              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">Cidade</p>
+              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">{t("common.city")}</p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">{user.city || "-"}</p>
             </div>
           </div>
@@ -163,7 +154,7 @@ const UserInfoCard: React.FC = () => {
           variant="outline"
           size="sm"
         >
-          Editar
+          {t("common.edit")}
         </Button>
       </div>
 
@@ -174,42 +165,30 @@ const UserInfoCard: React.FC = () => {
           </button>
           <div className="pr-10">
             <h4 className="mb-2 text-xl font-semibold text-gray-800 dark:text-white/90">
-              Editar Usuário
+              {t("profile.editTitle")}
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Atualize seus dados. Deixe a senha em branco para não alterá-la.
+              {t("profile.editSubtitle")}
             </p>
           </div>
           <form onSubmit={handleSave} className="flex flex-col">
             <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
               <div>
-                <Label htmlFor="edit-username">Usuário</Label>
-                <Input
-                  id="edit-username"
-                  name="username"
-                  type="text"
-                  value={editedUser.username || ""}
-                  onChange={handleInputChange}
-                />
+                <Label htmlFor="edit-username">{t("profile.user")}</Label>
+                <Input id="edit-username" name="username" type="text" value={editedUser.username || ""} onChange={handleInputChange} />
               </div>
               <div>
-                <Label htmlFor="edit-email">E-mail</Label>
-                <Input
-                  id="edit-email"
-                  name="email"
-                  type="email"
-                  value={editedUser.email || ""}
-                  onChange={handleInputChange}
-                />
+                <Label htmlFor="edit-email">{t("common.email")}</Label>
+                <Input id="edit-email" name="email" type="email" value={editedUser.email || ""} onChange={handleInputChange} />
               </div>
               <div className="col-span-2 lg:col-span-1">
-                <Label htmlFor="edit-password">Nova Senha (opcional)</Label>
+                <Label htmlFor="edit-password">{t("profile.newPassword")}</Label>
                 <div className="relative">
                   <Input
                     id="edit-password"
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Deixe em branco para manter a atual"
+                    placeholder={t("profile.newPasswordPlaceholder")}
                     value={editedUser.password || ""}
                     onChange={handleInputChange}
                   />
@@ -228,44 +207,20 @@ const UserInfoCard: React.FC = () => {
                 </div>
               </div>
               <div className="col-span-2 lg:col-span-1">
-                <Label htmlFor="edit-institution">Instituição</Label>
-                <Input
-                  id="edit-institution"
-                  name="institution"
-                  type="text"
-                  value={editedUser.institution || ""}
-                  onChange={handleInputChange}
-                />
+                <Label htmlFor="edit-institution">{t("common.institution")}</Label>
+                <Input id="edit-institution" name="institution" type="text" value={editedUser.institution || ""} onChange={handleInputChange} />
               </div>
               <div>
-                <Label htmlFor="edit-country">País</Label>
-                <Input
-                  id="edit-country"
-                  name="country"
-                  type="text"
-                  value={editedUser.country || ""}
-                  onChange={handleInputChange}
-                />
+                <Label htmlFor="edit-country">{t("common.country")}</Label>
+                <Input id="edit-country" name="country" type="text" value={editedUser.country || ""} onChange={handleInputChange} />
               </div>
               <div>
-                <Label htmlFor="edit-state">Estado</Label>
-                <Input
-                  id="edit-state"
-                  name="state"
-                  type="text"
-                  value={editedUser.state || ""}
-                  onChange={handleInputChange}
-                />
+                <Label htmlFor="edit-state">{t("common.state")}</Label>
+                <Input id="edit-state" name="state" type="text" value={editedUser.state || ""} onChange={handleInputChange} />
               </div>
               <div>
-                <Label htmlFor="edit-city">Cidade</Label>
-                <Input
-                  id="edit-city"
-                  name="city"
-                  type="text"
-                  value={editedUser.city || ""}
-                  onChange={handleInputChange}
-                />
+                <Label htmlFor="edit-city">{t("common.city")}</Label>
+                <Input id="edit-city" name="city" type="text" value={editedUser.city || ""} onChange={handleInputChange} />
               </div>
             </div>
             {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
@@ -275,14 +230,14 @@ const UserInfoCard: React.FC = () => {
                 onClick={closeModal}
                 className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
               >
-                Cancelar
+                {t("common.cancel")}
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
                 className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 disabled:cursor-not-allowed"
               >
-                {isSaving ? "Salvando..." : "Salvar Alterações"}
+                {isSaving ? t("common.saving") : t("common.saveChanges")}
               </button>
             </div>
           </form>

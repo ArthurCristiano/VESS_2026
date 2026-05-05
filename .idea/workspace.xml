@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e5d35abb-7d3c-41fd-85aa-020586ce0e36" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/vess-web-app-main/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/components/common/Modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/components/common/Modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/components/header/UserDropdown.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/components/header/UserDropdown.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/layout/AppHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/layout/AppHeader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/main.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/pages/AuthPages/AuthPageLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/pages/AuthPages/AuthPageLayout.tsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;adridantas&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ArthurCristiano/VESS_2026.git&quot;,
+    &quot;accountId&quot;: &quot;a59eed77-ae75-4718-b9d2-ba5e264bb541&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="3BPT7O2UVw5l42TNGxfojb3a5sM" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "VESS-29",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.45057473",
+    "settings.editor.selected.configurable": "project.propVCSSupport.Mappings",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="VESS_2026" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="VESS_2026" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.31033.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e5d35abb-7d3c-41fd-85aa-020586ce0e36" name="Changes" comment="" />
+      <created>1774389540374</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774389540374</updated>
+      <workItem from="1774389541953" duration="1992000" />
+      <workItem from="1774477158096" duration="1526000" />
+      <workItem from="1774478784632" duration="1817000" />
+      <workItem from="1774480749651" duration="155000" />
+      <workItem from="1774480931454" duration="967000" />
+      <workItem from="1776290190908" duration="1121000" />
+      <workItem from="1778018054873" duration="2602000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

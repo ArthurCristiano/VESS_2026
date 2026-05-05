@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 const rootElement = document.getElementById("root");
 
@@ -12,9 +13,11 @@ if (rootElement) {
   root.render(
     <StrictMode>
       <AuthProvider>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </LanguageProvider>
       </AuthProvider>
     </StrictMode>
   );

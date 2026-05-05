@@ -4,10 +4,12 @@ import Label from "./Label";
 import Input from "./input/InputField";
 import Button from "../ui/button/Button";
 import { resetPassword, validateResetToken } from "../../services/AuthService";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function ResetPasswordForm() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const token = searchParams.get("token") || "";
 
   const [newPassword, setNewPassword] = useState("");
@@ -39,30 +41,32 @@ export default function ResetPasswordForm() {
     setError("");
     setMessage("");
     if (newPassword !== confirmPassword) {
-      setError("As senhas não coincidem.");
+      setError(t("auth.reset.passwordMismatch"));
       setLoading(false);
       return;
     }
     try {
       await resetPassword(token, newPassword);
-      setMessage("Senha redefinida com sucesso. Você já pode fazer login.");
-      setTimeout(() => navigate("/login", { state: { message: "Senha redefinida com sucesso!" } }), 2000);
+      setMessage(t("auth.reset.success"));
+      setTimeout(() => navigate("/login", { state: { message: t("auth.reset.successShort") } }), 2000);
     } catch (err) {
-      setError("Não foi possível redefinir a senha. O link pode estar expirado ou inválido.");
+      setError(t("auth.reset.error"));
     } finally {
       setLoading(false);
     }
   };
 
   if (!tokenChecked) {
-    return <div className="p-8 text-center">Validando link...</div>;
+    return <div className="p-8 text-center">{t("auth.reset.validating")}</div>;
   }
 
   if (!tokenValid) {
     return (
       <div className="p-8 text-center">
-        <p className="text-error-500 mb-4">Link inválido ou expirado.</p>
-        <Link to="/recuperar-senha" className="text-brand-500 hover:text-brand-600">Solicitar novo link</Link>
+        <p className="text-error-500 mb-4">{t("auth.reset.invalidLink")}</p>
+        <Link to="/recuperar-senha" className="text-brand-500 hover:text-brand-600">
+          {t("auth.reset.requestNewLink")}
+        </Link>
       </div>
     );
   }
@@ -73,27 +77,27 @@ export default function ResetPasswordForm() {
         <div>
           <div className="mb-5 sm:mb-8">
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Redefinir senha
+              {t("auth.reset.title")}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Insira sua nova senha abaixo.
+              {t("auth.reset.subtitle")}
             </p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label>Nova senha <span className="text-error-500">*</span></Label>
+              <Label>{t("auth.reset.newPassword")} <span className="text-error-500">*</span></Label>
               <Input
                 type="password"
-                placeholder="Digite a nova senha"
+                placeholder={t("auth.reset.newPasswordPlaceholder")}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
             <div>
-              <Label>Confirmar nova senha <span className="text-error-500">*</span></Label>
+              <Label>{t("auth.reset.confirmPassword")} <span className="text-error-500">*</span></Label>
               <Input
                 type="password"
-                placeholder="Confirme a nova senha"
+                placeholder={t("auth.reset.confirmPasswordPlaceholder")}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
@@ -102,7 +106,7 @@ export default function ResetPasswordForm() {
             {message && <p className="text-sm text-green-500">{message}</p>}
             <div>
               <Button type="submit" className="w-full" size="sm" disabled={loading}>
-                {loading ? "Redefinindo..." : "Redefinir senha"}
+                {loading ? t("auth.reset.loading") : t("auth.reset.submit")}
               </Button>
             </div>
           </form>

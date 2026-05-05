@@ -14,8 +14,11 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import UserProfiles from "./pages/UserProfiles";
 import { SidebarProvider } from "./context/SidebarContext";
+import { useLanguage } from "./context/LanguageContext";
 
 export default function App() {
+  const { t } = useLanguage();
+
   return (
     <SidebarProvider>
       <BrowserRouter>
@@ -46,7 +49,7 @@ export default function App() {
 
               </Route>
             </Route>
-            <Route path="*" element={<div className="p-10 text-center">Página não encontrada (404)</div>} />
+            <Route path="*" element={<div className="p-10 text-center">{t("page.notFound")}</div>} />
 
         </Routes>
       </BrowserRouter>

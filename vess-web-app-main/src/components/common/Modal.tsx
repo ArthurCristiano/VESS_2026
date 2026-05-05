@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import React from "react";
+import { useLanguage } from "../../context/LanguageContext";
 
 interface ModalProps {
   id?: string;               
@@ -16,6 +17,8 @@ export default function Modal({
   title,
   children,
 }: ModalProps) {
+  const { t } = useLanguage();
+
   if (!isOpen) return null;
 
   return (
@@ -35,7 +38,7 @@ export default function Modal({
           <button
             onClick={onClose}
             className="rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
-            title="Fechar modal"
+            title={t("common.closeModal")}
           >
             <X className="size-5" />
           </button>

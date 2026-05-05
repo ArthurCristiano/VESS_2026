@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../ui/table";
 import { Eye } from "lucide-react";
-import api from "../../services/api"; 
-import Modal from "../common/Modal"; 
-import { useAuth } from "../../context/AuthContext"; 
-import axios from "axios"; 
+import api from "../../services/api";
+import Modal from "../common/Modal";
+import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
+import axios from "axios";
 
 interface UserReportData {
   id: number;
@@ -26,41 +27,32 @@ export default function UserReport() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserReportData | null>(null);
   const { logoutUser } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await api.get("/users"); 
+        const response = await api.get("/users");
         setUsers(response.data);
       } catch (err: any) {
-        setError("Falha ao buscar os usuários do servidor.");
+        setError(t("reports.usersError"));
         console.error("Erro ao buscar usuários:", err);
         if (axios.isAxiosError(err) && err.response?.status === 401) {
-            logoutUser();
+          logoutUser();
         }
       } finally {
         setLoading(false);
       }
     };
     fetchUsers();
-  }, [logoutUser]);
-
-  const handleViewClick = (user: UserReportData) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedUser(null);
-  };
+  }, [logoutUser, t]);
 
   const formatLocation = (user: UserReportData) => {
-      const parts = [user.city, user.state, user.country].filter(Boolean);
-      return parts.join(', ') || '-';
-  }
+    const parts = [user.city, user.state, user.country].filter(Boolean);
+    return parts.join(", ") || "-";
+  };
 
   return (
     <>
@@ -68,10 +60,10 @@ export default function UserReport() {
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-              Relatório de Usuários
+              {t("reports.usersTitle")}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Visualize os usuários cadastrados no sistema.
+              {t("reports.usersSubtitle")}
             </p>
           </div>
         </div>
@@ -81,22 +73,22 @@ export default function UserReport() {
             <TableHeader>
               <TableRow>
                 <TableCell isHeader className="px-4 py-3 text-start font-medium text-gray-500 text-xs dark:text-gray-400">
-                  Usuário
+                  {t("reports.user")}
                 </TableCell>
                 <TableCell isHeader className="px-4 py-3 text-start font-medium text-gray-500 text-xs dark:text-gray-400">
-                  Email
+                  {t("common.email")}
                 </TableCell>
                 <TableCell isHeader className="px-4 py-3 text-start font-medium text-gray-500 text-xs dark:text-gray-400">
-                  Instituição
+                  {t("common.institution")}
                 </TableCell>
                 <TableCell isHeader className="px-4 py-3 text-start font-medium text-gray-500 text-xs dark:text-gray-400">
-                  Localização
+                  {t("reports.location")}
                 </TableCell>
                 <TableCell isHeader className="px-4 py-3 text-center font-medium text-gray-500 text-xs dark:text-gray-400">
-                  Admin
+                  {t("reports.admin")}
                 </TableCell>
                 <TableCell isHeader className="px-4 py-3 text-center font-medium text-gray-500 text-xs dark:text-gray-400">
-                  Visualizar
+                  {t("common.view")}
                 </TableCell>
               </TableRow>
             </TableHeader>
@@ -105,19 +97,17 @@ export default function UserReport() {
               {loading ? (
                 <TableRow>
                   <TableCell className="px-4 py-24 text-center text-gray-500 dark:text-gray-400">
-                    Carregando usuários...
+                    {t("reports.loadingUsers")}
                   </TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell className="px-4 py-24 text-center text-red-500">
-                    {error}
-                  </TableCell>
+                  <TableCell className="px-4 py-24 text-center text-red-500">{error}</TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
                 <TableRow>
                   <TableCell className="px-4 py-24 text-center text-gray-500 dark:text-gray-400">
-                    Nenhum usuário encontrado.
+                    {t("reports.noUsers")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -136,20 +126,24 @@ export default function UserReport() {
                       {formatLocation(user)}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-center text-sm dark:text-gray-400">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           user.admin
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                            : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                         }`}
                       >
-                        {user.admin ? "Sim" : "Não"}
+                        {user.admin ? t("common.yes") : t("common.no")}
                       </span>
                     </TableCell>
                     <TableCell className="px-4 py-3 text-center">
                       <button
-                        onClick={() => handleViewClick(user)}
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsModalOpen(true);
+                        }}
                         className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                        title="Visualizar detalhes do usuário"
+                        title={t("reports.viewUserDetails")}
                       >
                         <Eye size={18} />
                       </button>
@@ -164,19 +158,22 @@ export default function UserReport() {
 
       <Modal
         isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        title={selectedUser ? `Detalhes de: ${selectedUser.username}` : "Detalhes do Usuário"}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedUser(null);
+        }}
+        title={selectedUser ? t("reports.userDetailsFor", { name: selectedUser.username }) : t("reports.userDetails")}
       >
         {selectedUser && (
           <div className="space-y-3 text-gray-700 dark:text-gray-300 text-sm">
             <p><strong>ID:</strong> {selectedUser.id}</p>
-            <p><strong>Username:</strong> {selectedUser.username}</p>
-            <p><strong>Email:</strong> {selectedUser.email}</p>
-            <p><strong>Instituição:</strong> {selectedUser.institution}</p>
-            <p><strong>País:</strong> {selectedUser.country}</p>
-            <p><strong>Estado:</strong> {selectedUser.state}</p>
-            <p><strong>Cidade:</strong> {selectedUser.city}</p>
-            <p><strong>Administrador:</strong> {selectedUser.admin ? "Sim" : "Não"}</p>
+            <p><strong>{t("profile.username")}:</strong> {selectedUser.username}</p>
+            <p><strong>{t("common.email")}:</strong> {selectedUser.email}</p>
+            <p><strong>{t("common.institution")}:</strong> {selectedUser.institution}</p>
+            <p><strong>{t("common.country")}:</strong> {selectedUser.country}</p>
+            <p><strong>{t("common.state")}:</strong> {selectedUser.state}</p>
+            <p><strong>{t("common.city")}:</strong> {selectedUser.city}</p>
+            <p><strong>{t("reports.admin")}:</strong> {selectedUser.admin ? t("common.yes") : t("common.no")}</p>
           </div>
         )}
       </Modal>
