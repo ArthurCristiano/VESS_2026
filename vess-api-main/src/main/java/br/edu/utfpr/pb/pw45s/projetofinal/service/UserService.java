@@ -1,5 +1,6 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.service;
 
+import br.edu.utfpr.pb.pw45s.projetofinal.dto.AdminUserUpdateDTO;
 import br.edu.utfpr.pb.pw45s.projetofinal.dto.UserMeDTO;
 import br.edu.utfpr.pb.pw45s.projetofinal.model.User;
 import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserProfile;
@@ -100,6 +101,44 @@ public class UserService extends CrudService<Long, User, UserRepository> impleme
         }
 
         return save(user);
+    }
+
+    @Transactional
+    public User updateByAdmin(Long userId, AdminUserUpdateDTO dto) {
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + userId));
+
+        String username = normalize(dto.getUsername());
+        String email = normalize(dto.getEmail());
+        String institution = normalize(dto.getInstitution());
+        String country = normalize(dto.getCountry());
+        String state = normalize(dto.getState());
+        String city = normalize(dto.getCity());
+
+        if (!Objects.equals(user.getUsername(), username)) {
+            validateUniqueUsername(username, userId);
+        }
+
+        if (!Objects.equals(user.getEmail(), email)) {
+            validateUniqueEmail(email, userId);
+        }
+
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setInstitution(institution);
+        user.setCountry(country);
+        user.setState(state);
+        user.setCity(city);
+
+        return save(user);
+    }
+
+    @Transactional
+    public User updateProfileByAdmin(Long userId, UserProfile profile) {
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + userId));
+        user.setProfile(profile);
+        return repository.save(user);
     }
 
     @Transactional
