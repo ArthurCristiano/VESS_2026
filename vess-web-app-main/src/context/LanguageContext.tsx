@@ -32,6 +32,34 @@ type TranslationKey =
   | "nav.peopleReport"
   | "nav.userReport"
   | "nav.regions"
+  | "regions.title"
+  | "regions.create"
+  | "regions.loading"
+  | "regions.errorLoad"
+  | "regions.type"
+  | "regions.description"
+  | "regions.areaAndColor"
+  | "regions.pointsCounter"
+  | "regions.removeLastPoint"
+  | "regions.resetPoints"
+  | "regions.submit"
+  | "regions.popupType"
+  | "regions.popupDescription"
+  | "regions.placeholderName"
+  | "regions.placeholderDescription"
+  | "regions.modalTitle"
+  | "regions.validation.pointsRange"
+  | "regions.validation.nameLength"
+  | "regions.validation.descriptionLength"
+  | "regions.validation.colorFormat"
+  | "regions.feedback.maxPoints"
+  | "regions.feedback.created"
+  | "regions.feedback.createError"
+  | "regions.type.city"
+  | "regions.type.state"
+  | "regions.type.stateRegion"
+  | "regions.type.projectArea"
+  | "regions.type.other"
   | "user.signIn"
   | "user.profile"
   | "user.signOut"
@@ -206,6 +234,34 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "nav.peopleReport": "Relatório de Pessoas",
     "nav.userReport": "Relatório de Usuários",
     "nav.regions": "Cadastro de Regiões",
+    "regions.title": "Regiões Cadastradas",
+    "regions.create": "Cadastrar Região",
+    "regions.loading": "Carregando regiões...",
+    "regions.errorLoad": "Falha ao carregar as regiões.",
+    "regions.type": "Tipo",
+    "regions.description": "Descrição",
+    "regions.areaAndColor": "Área da Região e Cor (clique no mapa para adicionar pontos)",
+    "regions.pointsCounter": "{count}/{max} pontos",
+    "regions.removeLastPoint": "Remover Último Ponto",
+    "regions.resetPoints": "Resetar Pontos",
+    "regions.submit": "Cadastrar Região",
+    "regions.popupType": "Tipo:",
+    "regions.popupDescription": "Descrição:",
+    "regions.placeholderName": "Ex.: Sudoeste do Paraná",
+    "regions.placeholderDescription": "Descrição opcional da região",
+    "regions.modalTitle": "Cadastrar Região",
+    "regions.validation.pointsRange": "A região deve ter entre 3 e 10 pontos.",
+    "regions.validation.nameLength": "O nome deve ter entre 2 e 100 caracteres.",
+    "regions.validation.descriptionLength": "A descrição deve ter no máximo 500 caracteres.",
+    "regions.validation.colorFormat": "A cor deve estar no formato #RRGGBB.",
+    "regions.feedback.maxPoints": "Máximo de 10 pontos atingido.",
+    "regions.feedback.created": "Região cadastrada com sucesso.",
+    "regions.feedback.createError": "Não foi possível cadastrar a região.",
+    "regions.type.city": "Cidade",
+    "regions.type.state": "Estado",
+    "regions.type.stateRegion": "Região de Estado",
+    "regions.type.projectArea": "Área de Projeto",
+    "regions.type.other": "Outro",
     "user.signIn": "Entrar",
     "user.profile": "Perfil",
     "user.signOut": "Sair",
@@ -370,6 +426,34 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "nav.peopleReport": "People Report",
     "nav.userReport": "User Report",
     "nav.regions": "Regions",
+    "regions.title": "Registered Regions",
+    "regions.create": "Create Region",
+    "regions.loading": "Loading regions...",
+    "regions.errorLoad": "Failed to load regions.",
+    "regions.type": "Type",
+    "regions.description": "Description",
+    "regions.areaAndColor": "Region Area and Color (click on map to add points)",
+    "regions.pointsCounter": "{count}/{max} points",
+    "regions.removeLastPoint": "Remove Last Point",
+    "regions.resetPoints": "Reset Points",
+    "regions.submit": "Create Region",
+    "regions.popupType": "Type:",
+    "regions.popupDescription": "Description:",
+    "regions.placeholderName": "e.g.: Southwest of Paraná",
+    "regions.placeholderDescription": "Optional region description",
+    "regions.modalTitle": "Create Region",
+    "regions.validation.pointsRange": "Region must have between 3 and 10 points.",
+    "regions.validation.nameLength": "Name must be between 2 and 100 characters.",
+    "regions.validation.descriptionLength": "Description must be at most 500 characters.",
+    "regions.validation.colorFormat": "Color must be in #RRGGBB format.",
+    "regions.feedback.maxPoints": "Maximum of 10 points reached.",
+    "regions.feedback.created": "Region created successfully.",
+    "regions.feedback.createError": "Could not create region.",
+    "regions.type.city": "City",
+    "regions.type.state": "State",
+    "regions.type.stateRegion": "State Region",
+    "regions.type.projectArea": "Project Area",
+    "regions.type.other": "Other",
     "user.signIn": "Sign in",
     "user.profile": "Profile",
     "user.signOut": "Sign out",
@@ -534,6 +618,34 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "nav.peopleReport": "Informe de Personas",
     "nav.userReport": "Informe de Usuarios",
     "nav.regions": "Registro de Regiones",
+    "regions.title": "Regiones Cadastradas",
+    "regions.create": "Registrar Región",
+    "regions.loading": "Cargando regiones...",
+    "regions.errorLoad": "No se pudieron cargar las regiones.",
+    "regions.type": "Tipo",
+    "regions.description": "Descripción",
+    "regions.areaAndColor": "Área y color de la región (haz clic en el mapa para agregar puntos)",
+    "regions.pointsCounter": "{count}/{max} puntos",
+    "regions.removeLastPoint": "Quitar Último Punto",
+    "regions.resetPoints": "Restablecer Puntos",
+    "regions.submit": "Registrar Región",
+    "regions.popupType": "Tipo:",
+    "regions.popupDescription": "Descripción:",
+    "regions.placeholderName": "Ej.: Suroeste de Paraná",
+    "regions.placeholderDescription": "Descripción opcional de la región",
+    "regions.modalTitle": "Registrar Región",
+    "regions.validation.pointsRange": "La región debe tener entre 3 y 10 puntos.",
+    "regions.validation.nameLength": "El nombre debe tener entre 2 y 100 caracteres.",
+    "regions.validation.descriptionLength": "La descripción debe tener como máximo 500 caracteres.",
+    "regions.validation.colorFormat": "El color debe tener el formato #RRGGBB.",
+    "regions.feedback.maxPoints": "Máximo de 10 puntos alcanzado.",
+    "regions.feedback.created": "Región registrada con éxito.",
+    "regions.feedback.createError": "No se pudo registrar la región.",
+    "regions.type.city": "Ciudad",
+    "regions.type.state": "Estado",
+    "regions.type.stateRegion": "Región del Estado",
+    "regions.type.projectArea": "Área del Proyecto",
+    "regions.type.other": "Otro",
     "user.signIn": "Entrar",
     "user.profile": "Perfil",
     "user.signOut": "Salir",

@@ -27,11 +27,14 @@ function FlagIcon({ language }: { language: Language }) {
         </span>
       )}
       {language === "en" && (
-        <span className="relative size-full bg-[#1f3f8b]">
-          <span className="absolute inset-x-0 top-[11px] h-[5px] bg-white" />
-          <span className="absolute inset-y-0 left-[11px] w-[5px] bg-white" />
-          <span className="absolute inset-x-0 top-[12px] h-[3px] bg-[#c8102e]" />
-          <span className="absolute inset-y-0 left-[12px] w-[3px] bg-[#c8102e]" />
+        <span className="relative size-full overflow-hidden bg-white">
+          <span className="absolute inset-x-0 top-0 h-[2px] bg-[#b22234]" />
+          <span className="absolute inset-x-0 top-[4px] h-[2px] bg-[#b22234]" />
+          <span className="absolute inset-x-0 top-[8px] h-[2px] bg-[#b22234]" />
+          <span className="absolute inset-x-0 top-[12px] h-[2px] bg-[#b22234]" />
+          <span className="absolute inset-x-0 top-[16px] h-[2px] bg-[#b22234]" />
+          <span className="absolute inset-x-0 top-[20px] h-[2px] bg-[#b22234]" />
+          <span className="absolute left-0 top-0 h-[13px] w-[13px] bg-[#3c3b6e]" />
         </span>
       )}
       {language === "es" && (
