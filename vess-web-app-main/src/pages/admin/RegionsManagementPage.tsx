@@ -9,6 +9,7 @@ import Button from "../../components/ui/button/Button";
 import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
 import Modal from "../../components/common/Modal";
+import { useLanguage } from "../../context/LanguageContext";
 
 type RegionType =
   | "CIDADE"
@@ -41,12 +42,12 @@ type RegionForm = {
   corHex: string;
 };
 
-const REGION_TYPES: Array<{ value: RegionType; label: string }> = [
-  { value: "CIDADE", label: "Cidade" },
-  { value: "ESTADO", label: "Estado" },
-  { value: "REGIAO_ESTADO", label: "Região de Estado" },
-  { value: "AREA_PROJETO", label: "Área de Projeto" },
-  { value: "OUTRO", label: "Outro" },
+const REGION_TYPES: Array<{ value: RegionType; labelKey: "regions.type.city" | "regions.type.state" | "regions.type.stateRegion" | "regions.type.projectArea" | "regions.type.other" }> = [
+  { value: "CIDADE", labelKey: "regions.type.city" },
+  { value: "ESTADO", labelKey: "regions.type.state" },
+  { value: "REGIAO_ESTADO", labelKey: "regions.type.stateRegion" },
+  { value: "AREA_PROJETO", labelKey: "regions.type.projectArea" },
+  { value: "OUTRO", labelKey: "regions.type.other" },
 ];
 
 const INITIAL_FORM: RegionForm = {
@@ -94,6 +95,7 @@ export default function RegionsManagementPage() {
   const [form, setForm] = useState<RegionForm>(INITIAL_FORM);
   const [selectedPoints, setSelectedPoints] = useState<Array<[number, number]>>([]);
   const { logoutUser } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     void fetchRegions();
@@ -123,7 +125,7 @@ export default function RegionsManagementPage() {
       const response = await api.get<Region[]>("/regioes");
       setRegions(response.data);
     } catch (err: unknown) {
-      setError(getBackendErrorMessage(err) ?? "Falha ao carregar as regiões.");
+      setError(getBackendErrorMessage(err) ?? t("regions.errorLoad"));
       if (axios.isAxiosError(err) && err.response?.status === 401) {
         logoutUser();
       }
@@ -147,7 +149,7 @@ export default function RegionsManagementPage() {
 
   const handleAddPoint = (latitude: number, longitude: number) => {
     if (selectedPoints.length >= MAX_POINTS) {
-      showFeedback(`Máximo de ${MAX_POINTS} pontos atingido.`, "error");
+      showFeedback(t("regions.feedback.maxPoints"), "error");
       return;
     }
     setFeedback(null);
@@ -170,28 +172,28 @@ export default function RegionsManagementPage() {
 
     if (selectedPoints.length < 3 || selectedPoints.length > MAX_POINTS) {
       setSubmitting(false);
-      showFeedback(`A região deve ter entre 3 e ${MAX_POINTS} pontos.`, "error");
+      showFeedback(t("regions.validation.pointsRange"), "error");
       return;
     }
 
     const trimmedName = form.nome.trim();
     if (trimmedName.length < 2 || trimmedName.length > 100) {
       setSubmitting(false);
-      showFeedback("O nome deve ter entre 2 e 100 caracteres.", "error");
+      showFeedback(t("regions.validation.nameLength"), "error");
       return;
     }
 
     const trimmedDescription = form.descricao.trim();
     if (trimmedDescription.length > 500) {
       setSubmitting(false);
-      showFeedback("A descrição deve ter no máximo 500 caracteres.", "error");
+      showFeedback(t("regions.validation.descriptionLength"), "error");
       return;
     }
 
     const trimmedColor = form.corHex.trim();
     if (trimmedColor && !isValidHexColor(trimmedColor)) {
       setSubmitting(false);
-      showFeedback("A cor deve estar no formato #RRGGBB.", "error");
+      showFeedback(t("regions.validation.colorFormat"), "error");
       return;
     }
 
@@ -209,11 +211,11 @@ export default function RegionsManagementPage() {
 
     try {
       await api.post("/regioes", payload);
-      showFeedback("Região cadastrada com sucesso.", "success");
+      showFeedback(t("regions.feedback.created"), "success");
       closeModal();
       await fetchRegions();
     } catch (err: unknown) {
-      showFeedback(getBackendErrorMessage(err) ?? "Não foi possível cadastrar a região.", "error");
+      showFeedback(getBackendErrorMessage(err) ?? t("regions.feedback.createError"), "error");
       if (axios.isAxiosError(err) && err.response?.status === 401) {
         logoutUser();
       }
@@ -226,9 +228,9 @@ export default function RegionsManagementPage() {
     <div className="space-y-6">
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-4 pt-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:px-6">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">Regiões Cadastradas</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">{t("regions.title")}</h3>
           <Button type="button" startIcon={<Plus size={16} />} onClick={openCreateModal}>
-            Cadastrar Região
+            {t("regions.create")}
           </Button>
         </div>
 
@@ -247,7 +249,7 @@ export default function RegionsManagementPage() {
         <div className="h-[560px] w-full overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
           {loading ? (
             <div className="flex h-full items-center justify-center text-sm text-gray-500 dark:text-gray-400">
-              Carregando regiões...
+              {t("regions.loading")}
             </div>
           ) : error ? (
             <div className="flex h-full items-center justify-center px-4 text-sm text-red-500">{error}</div>
@@ -270,11 +272,11 @@ export default function RegionsManagementPage() {
                       <div className="min-w-[180px] text-sm">
                         <h4 className="mb-1 font-semibold text-gray-900">{region.nome}</h4>
                         <p className="text-gray-700">
-                          <span className="font-medium">Tipo:</span>{" "}
-                          {REGION_TYPES.find((type) => type.value === region.tipo)?.label ?? region.tipo}
+                          <span className="font-medium">{t("regions.popupType")}</span>{" "}
+                          {t(REGION_TYPES.find((type) => type.value === region.tipo)?.labelKey ?? "regions.type.other")}
                         </p>
                         <p className="text-gray-700">
-                          <span className="font-medium">Descrição:</span>{" "}
+                          <span className="font-medium">{t("regions.popupDescription")}</span>{" "}
                           {region.descricao?.trim() || "-"}
                         </p>
                       </div>
@@ -287,20 +289,20 @@ export default function RegionsManagementPage() {
         </div>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal} title="Cadastrar Região" maxWidthClass="max-w-5xl">
+      <Modal isOpen={isModalOpen} onClose={closeModal} title={t("regions.modalTitle")} maxWidthClass="max-w-5xl">
         <form className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="nome">Nome *</Label>
             <Input
               id="nome"
-              placeholder="Ex.: Sudoeste do Paraná"
+              placeholder={t("regions.placeholderName")}
               value={form.nome}
               onChange={(e) => setForm((prev) => ({ ...prev, nome: e.target.value }))}
             />
           </div>
 
           <div>
-            <Label htmlFor="tipo">Tipo *</Label>
+            <Label htmlFor="tipo">{t("regions.type")} *</Label>
             <select
               id="tipo"
               className="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
@@ -309,17 +311,17 @@ export default function RegionsManagementPage() {
             >
               {REGION_TYPES.map((option) => (
                 <option key={option.value} value={option.value} className="bg-white text-gray-800 dark:bg-gray-800 dark:text-white">
-                  {option.label}
+                  {t(option.labelKey)}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="md:col-span-2">
-            <Label htmlFor="descricao">Descrição</Label>
+            <Label htmlFor="descricao">{t("regions.description")}</Label>
             <Input
               id="descricao"
-              placeholder="Descrição opcional da região"
+              placeholder={t("regions.placeholderDescription")}
               value={form.descricao}
               onChange={(e) => setForm((prev) => ({ ...prev, descricao: e.target.value }))}
             />
@@ -327,9 +329,9 @@ export default function RegionsManagementPage() {
 
           <div className="md:col-span-2">
             <div className="mb-2 flex items-center justify-between">
-              <Label>Área da Região e Cor (clique no mapa para adicionar pontos)</Label>
+              <Label>{t("regions.areaAndColor")}</Label>
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                {selectedPoints.length}/{MAX_POINTS} pontos
+                {t("regions.pointsCounter", { count: selectedPoints.length, max: MAX_POINTS })}
               </span>
             </div>
 
@@ -359,7 +361,7 @@ export default function RegionsManagementPage() {
                 onClick={handleUndoPoint}
                 disabled={selectedPoints.length === 0}
               >
-                Remover Último Ponto
+                {t("regions.removeLastPoint")}
               </Button>
               <Button
                 type="button"
@@ -370,7 +372,7 @@ export default function RegionsManagementPage() {
                 onClick={handleResetPoints}
                 disabled={selectedPoints.length === 0}
               >
-                Resetar Pontos
+                {t("regions.resetPoints")}
               </Button>
             </div>
 
@@ -413,7 +415,7 @@ export default function RegionsManagementPage() {
               startIcon={<Plus size={16} />}
               disabled={submitting || form.nome.trim().length < 2 || selectedPoints.length < 3}
             >
-              Cadastrar Região
+              {t("regions.submit")}
             </Button>
             <Button
               type="button"
