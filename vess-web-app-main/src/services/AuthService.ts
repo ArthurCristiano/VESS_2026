@@ -1,59 +1,60 @@
 import api from "./api";
 
 export interface User {
-  id: number;
-  username: string;
-  email: string;
-  institution: string;
-  country: string;
-  state: string;
-  password?: string;
-  city: string;
-  roles: string[];
-  admin: boolean;
+    id: number;
+    username: string;
+    email: string;
+    institution: string;
+    country: string;
+    state: string;
+    password?: string;
+    city: string;
+    roles: string[];
+    admin: boolean;
+    profile?: "ADMINISTRADOR" | "PESQUISADOR";
+    status?: "PENDENTE_EMAIL" | "ATIVO" | "INATIVO";
 }
+
 export interface LoginResponse {
-  token: string;
-  user: User;
+    token: string;
+    user: User;
 }
 
 export interface ConfirmEmailResponse {
-  success: boolean;
-  message: string;
-  email: string | null;
+    success: boolean;
+    message: string;
+    email: string | null;
 }
 
 export async function login(username: string, password: string): Promise<LoginResponse> {
-  const { data } = await api.post<LoginResponse>("/auth/login", { username, password });
-  return data;
+    const { data } = await api.post<LoginResponse>("/auth/login", { username, password });
+    return data;
 }
 
 export async function register(username: string, email: string, password: string): Promise<User> {
-  const { data } = await api.post<User>("/auth/register", { username, email, password });
-  return data;
+    const { data } = await api.post<User>("/auth/register", { username, email, password });
+    return data;
 }
 
-
 export function logout() {
-  localStorage.removeItem("token");
+    localStorage.removeItem("token");
 }
 
 export async function forgotPassword(email: string): Promise<void> {
-  await api.post("/auth/forgot-password", { email });
+    await api.post("/auth/forgot-password", { email });
 }
 
 export async function validateResetToken(token: string): Promise<void> {
-  await api.get("/auth/reset-password/validate", { params: { token } });
+    await api.get("/auth/reset-password/validate", { params: { token } });
 }
 
 export async function resetPassword(token: string, newPassword: string): Promise<void> {
-  await api.post("/auth/reset-password", { token, newPassword });
+    await api.post("/auth/reset-password", { token, newPassword });
 }
 
 export async function verifyConfirmEmailToken(token: string): Promise<ConfirmEmailResponse> {
-  const { data } = await api.get<ConfirmEmailResponse>("/auth/confirm-email/verify", {
-    params: { token },
-  });
-  return data;
+    const { data } = await api.get<ConfirmEmailResponse>("/auth/confirm-email/verify", {
+        params: { token },
+    });
+    return data;
 }
-
