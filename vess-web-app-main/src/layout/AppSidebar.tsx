@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { Link, useLocation } from "react-router";
-import { MapIcon, MapPinnedIcon, UsersIcon } from "lucide-react";
+
+import { MapIcon, MapPinnedIcon, MapPlusIcon, UsersIcon } from "lucide-react";
 
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../context/AuthContext";
@@ -11,7 +12,7 @@ import img from "../assets/utfpr_img.png";
 import img_dark from "../assets/utfpr_dark_img.png";
 
 type NavItem = {
-  nameKey: "nav.map" | "nav.locationReport" | "nav.peopleReport" | "nav.userReport";
+  nameKey: "nav.map" | "nav.locationReport" | "nav.peopleReport" | "nav.userReport" | "nav.regions";
   icon: React.ReactNode;
   path: string;
   adminOnly?: boolean;
@@ -39,6 +40,12 @@ const navItems: NavItem[] = [
     icon: <UsersIcon />,
     nameKey: "nav.userReport",
     path: "/relatorio-usuarios",
+    adminOnly: true,
+  },
+  {
+    icon: <MapPlusIcon />,
+    nameKey: "nav.regions",
+    path: "/admin/regioes",
     adminOnly: true,
   },
 ];

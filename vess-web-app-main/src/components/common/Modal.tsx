@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import React from "react";
 import { useLanguage } from "../../context/LanguageContext";
+import { useEffect } from "react";
 
 interface ModalProps {
   id?: string;               
@@ -8,6 +9,7 @@ interface ModalProps {
   onClose: () => void;       
   title: string;           
   children: React.ReactNode; 
+  maxWidthClass?: string;
 }
 
 export default function Modal({
@@ -16,8 +18,20 @@ export default function Modal({
   onClose,
   title,
   children,
+  maxWidthClass = "max-w-xl",
 }: ModalProps) {
   const { t } = useLanguage();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -28,7 +42,7 @@ export default function Modal({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-transform duration-300 dark:bg-gray-900 dark:ring-gray-800"
+        className={`relative w-full ${maxWidthClass} max-h-[95vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-transform duration-300 dark:bg-gray-900 dark:ring-gray-800`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-gray-200 pb-3 dark:border-gray-800">

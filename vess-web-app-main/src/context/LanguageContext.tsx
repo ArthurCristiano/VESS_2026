@@ -31,6 +31,7 @@ type TranslationKey =
   | "nav.locationReport"
   | "nav.peopleReport"
   | "nav.userReport"
+  | "nav.regions"
   | "user.signIn"
   | "user.profile"
   | "user.signOut"
@@ -204,6 +205,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "nav.locationReport": "Relatório de Localizações",
     "nav.peopleReport": "Relatório de Pessoas",
     "nav.userReport": "Relatório de Usuários",
+    "nav.regions": "Cadastro de Regiões",
     "user.signIn": "Entrar",
     "user.profile": "Perfil",
     "user.signOut": "Sair",
@@ -367,6 +369,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "nav.locationReport": "Location Report",
     "nav.peopleReport": "People Report",
     "nav.userReport": "User Report",
+    "nav.regions": "Regions",
     "user.signIn": "Sign in",
     "user.profile": "Profile",
     "user.signOut": "Sign out",
@@ -530,6 +533,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "nav.locationReport": "Informe de Ubicaciones",
     "nav.peopleReport": "Informe de Personas",
     "nav.userReport": "Informe de Usuarios",
+    "nav.regions": "Registro de Regiones",
     "user.signIn": "Entrar",
     "user.profile": "Perfil",
     "user.signOut": "Salir",
