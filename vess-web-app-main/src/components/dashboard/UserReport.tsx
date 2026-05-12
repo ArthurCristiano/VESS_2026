@@ -6,6 +6,7 @@ import { Pencil, RefreshCw, ShieldCheck, UserX } from "lucide-react";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../ui/table";
 import Modal from "../common/Modal";
 import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 import { getBackendErrorMessage } from "../../services/api";
 import {
     getUser,
@@ -54,17 +55,17 @@ function formatLocation(user: AdminUserDto) {
     return parts.join(", ") || "-";
 }
 
-function formatProfile(profile?: UserProfile) {
-    if (profile === "ADMINISTRADOR") return "Administrador";
-    if (profile === "PESQUISADOR") return "Pesquisador";
-    return "Não informado";
+function formatProfile(profile: UserProfile | undefined, t: ReturnType<typeof useLanguage>["t"]) {
+    if (profile === "ADMINISTRADOR") return t("role.admin");
+    if (profile === "PESQUISADOR") return t("role.researcher");
+    return t("common.notInformed");
 }
 
-function formatStatus(status?: UserStatus) {
-    if (status === "ATIVO") return "Ativo";
-    if (status === "INATIVO") return "Inativo";
-    if (status === "PENDENTE_EMAIL") return "Pendente e-mail";
-    return "Não informado";
+function formatStatus(status: UserStatus | undefined, t: ReturnType<typeof useLanguage>["t"]) {
+    if (status === "ATIVO") return t("status.active");
+    if (status === "INATIVO") return t("status.inactive");
+    if (status === "PENDENTE_EMAIL") return t("status.pendingEmail");
+    return t("common.notInformed");
 }
 
 function profileBadgeClass(profile?: UserProfile) {
@@ -110,6 +111,7 @@ export default function UserReport() {
     const [selectedUser, setSelectedUser] = useState<AdminUserDto | null>(null);
     const [formData, setFormData] = useState<UserFormData | null>(null);
     const { logoutUser, user: currentUser, updateUserContext } = useAuth();
+    const { t } = useLanguage();
 
     const handleAuthError = useCallback(
         (err: unknown) => {
@@ -136,13 +138,13 @@ export default function UserReport() {
                 const data = await listUsers();
                 setUsers(data);
             } catch (err) {
-                setError(resolveErrorMessage(err, "Falha ao buscar os usuários do servidor."));
+                setError(resolveErrorMessage(err, t("reports.usersError")));
                 console.error("Erro ao buscar usuários:", err);
             } finally {
                 if (showTableLoading) setLoading(false);
             }
         },
-        [resolveErrorMessage]
+        [resolveErrorMessage, t]
     );
 
     useEffect(() => {
@@ -160,7 +162,7 @@ export default function UserReport() {
         } catch (err) {
             setFeedback({
                 type: "error",
-                message: resolveErrorMessage(err, "Falha ao carregar os dados do usuário."),
+                message: resolveErrorMessage(err, t("adminUsers.loadUserError")),
             });
         } finally {
             setActionLoading(false);
@@ -215,12 +217,12 @@ export default function UserReport() {
                 prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
             );
 
-            setFeedback({ type: "success", message: "Usuário atualizado com sucesso." });
+            setFeedback({ type: "success", message: t("adminUsers.updateSuccess") });
             await loadUsers(false);
         } catch (err) {
             setFeedback({
                 type: "error",
-                message: resolveErrorMessage(err, "Falha ao atualizar o usuário."),
+                message: resolveErrorMessage(err, t("adminUsers.updateError")),
             });
         } finally {
             setActionLoading(false);
@@ -231,18 +233,18 @@ export default function UserReport() {
         if (currentUser?.id === targetUser.id) {
             setFeedback({
                 type: "error",
-                message: "Você não pode inativar o próprio usuário logado.",
+                message: t("adminUsers.cannotInactivateSelf"),
             });
             return;
         }
 
         if (targetUser.status === "INATIVO") {
-            setFeedback({ type: "error", message: "Este usuário já está inativo." });
+            setFeedback({ type: "error", message: t("adminUsers.alreadyInactive") });
             return;
         }
 
         const confirmed = window.confirm(
-            `Inativar o usuário ${targetUser.username}? Ele não poderá mais acessar o sistema.`
+            t("adminUsers.confirmInactivate", { name: targetUser.username })
         );
 
         if (!confirmed) return;
@@ -262,12 +264,12 @@ export default function UserReport() {
                 setFormData(getUserFormData(updatedUser));
             }
 
-            setFeedback({ type: "success", message: "Usuário inativado com sucesso." });
+            setFeedback({ type: "success", message: t("adminUsers.inactivateSuccess") });
             await loadUsers(false);
         } catch (err) {
             setFeedback({
                 type: "error",
-                message: resolveErrorMessage(err, "Falha ao inativar o usuário."),
+                message: resolveErrorMessage(err, t("adminUsers.inactivateError")),
             });
         } finally {
             setActionLoading(false);
@@ -290,10 +292,10 @@ export default function UserReport() {
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-                            Cadastro de usuários
+                            {t("adminUsers.title")}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Visualize e gerencie os usuários cadastrados no sistema.
+                            {t("adminUsers.subtitle")}
                         </p>
                     </div>
 
@@ -304,7 +306,7 @@ export default function UserReport() {
                         className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
                         <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-                        Atualizar
+                        {t("common.refresh")}
                     </button>
                 </div>
 
@@ -328,43 +330,43 @@ export default function UserReport() {
                                     isHeader
                                     className="px-4 py-3 text-start text-xs font-medium text-gray-500 dark:text-gray-400"
                                 >
-                                    Nome
+                                    {t("common.name")}
                                 </TableCell>
                                 <TableCell
                                     isHeader
                                     className="px-4 py-3 text-start text-xs font-medium text-gray-500 dark:text-gray-400"
                                 >
-                                    E-mail
+                                    {t("common.email")}
                                 </TableCell>
                                 <TableCell
                                     isHeader
                                     className="px-4 py-3 text-start text-xs font-medium text-gray-500 dark:text-gray-400"
                                 >
-                                    Perfil
+                                    {t("adminUsers.profile")}
                                 </TableCell>
                                 <TableCell
                                     isHeader
                                     className="px-4 py-3 text-start text-xs font-medium text-gray-500 dark:text-gray-400"
                                 >
-                                    Status
+                                    {t("adminUsers.status")}
                                 </TableCell>
                                 <TableCell
                                     isHeader
                                     className="px-4 py-3 text-start text-xs font-medium text-gray-500 dark:text-gray-400"
                                 >
-                                    Instituição
+                                    {t("common.institution")}
                                 </TableCell>
                                 <TableCell
                                     isHeader
                                     className="px-4 py-3 text-start text-xs font-medium text-gray-500 dark:text-gray-400"
                                 >
-                                    Localização
+                                    {t("reports.location")}
                                 </TableCell>
                                 <TableCell
                                     isHeader
                                     className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400"
                                 >
-                                    Ações
+                                    {t("adminUsers.actions")}
                                 </TableCell>
                             </TableRow>
                         </TableHeader>
@@ -376,7 +378,7 @@ export default function UserReport() {
                                         colSpan={7}
                                         className="px-4 py-24 text-center text-gray-500 dark:text-gray-400"
                                     >
-                                        Carregando usuários...
+                                        {t("reports.loadingUsers")}
                                     </TableCell>
                                 </TableRow>
                             ) : error ? (
@@ -391,7 +393,7 @@ export default function UserReport() {
                                         colSpan={7}
                                         className="px-4 py-24 text-center text-gray-500 dark:text-gray-400"
                                     >
-                                        Nenhum usuário encontrado.
+                                        {t("reports.noUsers")}
                                     </TableCell>
                                 </TableRow>
                             ) : (
@@ -417,7 +419,7 @@ export default function UserReport() {
                                 profile
                             )}`}
                         >
-                          {formatProfile(profile)}
+                          {formatProfile(profile, t)}
                         </span>
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-sm">
@@ -426,7 +428,7 @@ export default function UserReport() {
                                 user.status
                             )}`}
                         >
-                          {formatStatus(user.status)}
+                          {formatStatus(user.status, t)}
                         </span>
                                             </TableCell>
                                             <TableCell className="max-w-[180px] truncate px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
@@ -442,10 +444,10 @@ export default function UserReport() {
                                                         onClick={() => void handleOpenModal(user)}
                                                         disabled={actionLoading}
                                                         className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-60 dark:text-blue-400 dark:hover:bg-blue-900/20"
-                                                        title="Visualizar e editar usuário"
+                                                        title={t("adminUsers.viewEditTitle")}
                                                     >
                                                         <Pencil size={15} />
-                                                        Gerenciar
+                                                        {t("adminUsers.manage")}
                                                     </button>
 
                                                     <button
@@ -455,12 +457,12 @@ export default function UserReport() {
                                                         className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:text-red-400 dark:hover:bg-red-900/20"
                                                         title={
                                                             isCurrentUser
-                                                                ? "Você não pode inativar o próprio usuário"
-                                                                : "Inativar usuário"
+                                                                ? t("adminUsers.inactivateTitle")
+                                                                : t("adminUsers.inactivateUser")
                                                         }
                                                     >
                                                         <UserX size={15} />
-                                                        Inativar
+                                                        {t("adminUsers.inactivate")}
                                                     </button>
                                                 </div>
                                             </TableCell>
@@ -479,8 +481,8 @@ export default function UserReport() {
                 maxWidthClass="max-w-3xl"
                 title={
                     selectedUser
-                        ? `Cadastro de usuários: ${selectedUser.username}`
-                        : "Cadastro de usuários"
+                        ? `${t("adminUsers.title")}: ${selectedUser.username}`
+                        : t("adminUsers.title")
                 }
             >
                 {selectedUser && formData && (
@@ -494,23 +496,23 @@ export default function UserReport() {
                             </div>
 
                             <div>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">Perfil atual</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{t("adminUsers.currentProfile")}</p>
                                 <p className="font-medium text-gray-800 dark:text-white/90">
-                                    {formatProfile(getUserProfile(selectedUser))}
+                                    {formatProfile(getUserProfile(selectedUser), t)}
                                 </p>
                             </div>
 
                             <div>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{t("adminUsers.status")}</p>
                                 <p className="font-medium text-gray-800 dark:text-white/90">
-                                    {formatStatus(selectedUser.status)}
+                                    {formatStatus(selectedUser.status, t)}
                                 </p>
                             </div>
                         </div>
 
                         <div className="grid gap-4 sm:grid-cols-2">
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Nome
+                                {t("common.name")}
                                 <input
                                     className={fieldClass}
                                     value={formData.username}
@@ -522,7 +524,7 @@ export default function UserReport() {
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                E-mail
+                                {t("common.email")}
                                 <input
                                     className={fieldClass}
                                     type="email"
@@ -533,7 +535,7 @@ export default function UserReport() {
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Instituição
+                                {t("common.institution")}
                                 <input
                                     className={fieldClass}
                                     value={formData.institution}
@@ -545,7 +547,7 @@ export default function UserReport() {
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Perfil
+                                {t("adminUsers.profile")}
                                 <select
                                     className={fieldClass}
                                     value={formData.profile}
@@ -554,13 +556,13 @@ export default function UserReport() {
                                         handleFormChange("profile", event.target.value as UserProfile)
                                     }
                                 >
-                                    <option value="PESQUISADOR">Pesquisador</option>
-                                    <option value="ADMINISTRADOR">Administrador</option>
+                                    <option value="PESQUISADOR">{t("role.researcher")}</option>
+                                    <option value="ADMINISTRADOR">{t("role.admin")}</option>
                                 </select>
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                País
+                                {t("common.country")}
                                 <input
                                     className={fieldClass}
                                     value={formData.country}
@@ -572,7 +574,7 @@ export default function UserReport() {
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Estado
+                                {t("common.state")}
                                 <input
                                     className={fieldClass}
                                     value={formData.state}
@@ -584,7 +586,7 @@ export default function UserReport() {
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 sm:col-span-2">
-                                Cidade
+                                {t("common.city")}
                                 <input
                                     className={fieldClass}
                                     value={formData.city}
@@ -608,7 +610,7 @@ export default function UserReport() {
                                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-900/20"
                             >
                                 <UserX size={16} />
-                                Inativar usuário
+                                {t("adminUsers.inactivateUser")}
                             </button>
 
                             <div className="flex flex-col gap-3 sm:flex-row">
@@ -618,7 +620,7 @@ export default function UserReport() {
                                     disabled={actionLoading}
                                     className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                                 >
-                                    Cancelar
+                                    {t("common.cancel")}
                                 </button>
 
                                 <button
@@ -627,7 +629,7 @@ export default function UserReport() {
                                     className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     <ShieldCheck size={16} />
-                                    {actionLoading ? "Salvando..." : "Salvar alterações"}
+                                    {actionLoading ? t("common.saving") : t("common.saveChanges")}
                                 </button>
                             </div>
                         </div>
