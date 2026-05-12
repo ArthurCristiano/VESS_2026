@@ -7,6 +7,8 @@ import br.edu.utfpr.pb.pw45s.projetofinal.repository.RegiaoRepository;
 import br.edu.utfpr.pb.pw45s.projetofinal.service.RegiaoService;
 import br.edu.utfpr.pb.pw45s.projetofinal.shared.CrudController;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,29 @@ public class RegiaoController extends CrudController<Long, Regiao, RegiaoDTO, Re
 
     public RegiaoController() {
         super(Regiao.class, RegiaoDTO.class);
+    }
+
+    @Override
+    @PostMapping
+    public ResponseEntity<Long> create(@RequestBody @Valid RegiaoDTO dto) {
+        Regiao entity = toEntity(dto);
+        if (entity.getPontos() != null) {
+            entity.getPontos().forEach(p -> p.setRegiao(entity));
+        }
+        Regiao saved = service.save(entity);
+        return new ResponseEntity<>(saved.getId(), HttpStatus.CREATED);
+    }
+
+    @Override
+    @PutMapping("/{id}")
+    public ResponseEntity<Long> update(@RequestBody @Valid RegiaoDTO dto, @PathVariable Long id) {
+        Regiao entity = toEntity(dto);
+        entity.setId(id);
+        if (entity.getPontos() != null) {
+            entity.getPontos().forEach(p -> p.setRegiao(entity));
+        }
+        Regiao saved = service.save(entity);
+        return ResponseEntity.ok(saved.getId());
     }
 
     @GetMapping("/ativas")
@@ -41,8 +66,7 @@ public class RegiaoController extends CrudController<Long, Regiao, RegiaoDTO, Re
     @PatchMapping("/{id}/inativar")
     public ResponseEntity<RegiaoDTO> inativar(@PathVariable Long id) {
         try {
-            Regiao regiao = service.inativar(id);
-            return ResponseEntity.ok(toDto(regiao));
+            return ResponseEntity.ok(toDto(service.inativar(id)));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (IllegalStateException e) {
@@ -53,8 +77,7 @@ public class RegiaoController extends CrudController<Long, Regiao, RegiaoDTO, Re
     @PatchMapping("/{id}/reativar")
     public ResponseEntity<RegiaoDTO> reativar(@PathVariable Long id) {
         try {
-            Regiao regiao = service.reativar(id);
-            return ResponseEntity.ok(toDto(regiao));
+            return ResponseEntity.ok(toDto(service.reativar(id)));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (IllegalStateException e) {

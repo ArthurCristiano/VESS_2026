@@ -2,13 +2,14 @@ package br.edu.utfpr.pb.pw45s.projetofinal.model;
 
 import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.RegiaoTipo;
 import br.edu.utfpr.pb.pw45s.projetofinal.shared.Identifiable;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "regiao")
@@ -35,6 +36,13 @@ public class Regiao implements Identifiable<Long> {
     @Column(nullable = false, length = 20)
     private RegiaoTipo tipo;
 
+    @Pattern(
+            regexp = "^#([A-Fa-f0-9]{6})$",
+            message = "A cor deve estar no formato hexadecimal (#RRGGBB), ex: #1D9E75."
+    )
+    @Column(length = 7, name = "cor_hex")
+    private String corHex;
+
     @Column(nullable = false)
     private boolean ativa = true;
 
@@ -44,9 +52,19 @@ public class Regiao implements Identifiable<Long> {
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
+    @OneToMany(
+            mappedBy = "regiao",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
+    @OrderBy("ordem ASC")
+    @JsonManagedReference
+    private List<RegiaoPonto> pontos = new ArrayList<>();
+
     @PrePersist
     private void prePersist() {
-        this.dataCriacao = LocalDateTime.now();
+        this.dataCriacao    = LocalDateTime.now();
         this.dataAtualizacao = LocalDateTime.now();
     }
 
