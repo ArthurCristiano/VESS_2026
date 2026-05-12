@@ -14,6 +14,8 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import UserProfiles from "./pages/UserProfiles";
 import { SidebarProvider } from "./context/SidebarContext";
+import ForbiddenPage from "./pages/ForbiddenPage";
+import RegionsManagementPage from "./pages/admin/RegionsManagementPage";
 import { useLanguage } from "./context/LanguageContext";
 
 export default function App() {
@@ -42,9 +44,11 @@ export default function App() {
                   path="/relatorio-pessoas"
                   element={<UserConfigReport />}
                 />
+                <Route path="/acesso-negado" element={<ForbiddenPage />} />
 
                 <Route element={<AdminProtectedRoute />}>
                   <Route path="/relatorio-usuarios" element={<UserReport />} />
+                  <Route path="/admin/regioes" element={<RegionsManagementPage />} />
                 </Route>
 
               </Route>
