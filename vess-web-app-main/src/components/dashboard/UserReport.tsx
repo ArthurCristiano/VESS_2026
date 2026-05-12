@@ -336,7 +336,7 @@ export default function UserReport() {
                                     isHeader
                                     className="px-4 py-3 text-start text-xs font-medium text-gray-500 dark:text-gray-400"
                                 >
-                                    E-mail
+                                    {t("common.email")}
                                 </TableCell>
                                 <TableCell
                                     isHeader
@@ -524,7 +524,7 @@ export default function UserReport() {
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                E-mail
+                                {t("common.email")}
                                 <input
                                     className={fieldClass}
                                     type="email"
@@ -562,7 +562,7 @@ export default function UserReport() {
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                País
+                                {t("common.country")}
                                 <input
                                     className={fieldClass}
                                     value={formData.country}
@@ -574,7 +574,7 @@ export default function UserReport() {
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Estado
+                                {t("common.state")}
                                 <input
                                     className={fieldClass}
                                     value={formData.state}
@@ -586,7 +586,7 @@ export default function UserReport() {
                             </label>
 
                             <label className="space-y-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 sm:col-span-2">
-                                Cidade
+                                {t("common.city")}
                                 <input
                                     className={fieldClass}
                                     value={formData.city}
