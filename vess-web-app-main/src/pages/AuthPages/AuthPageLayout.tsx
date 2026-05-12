@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import ThemeTogglerTwo from "../../components/common/ThemeTogglerTwo";
+import LanguageSelector from "../../components/common/LanguageSelector";
 
 export default function AuthLayout({
   children,
@@ -19,6 +20,10 @@ export default function AuthLayout({
             alt="Tela de autenticação"
             className="object-cover w-full h-full"
           />
+        </div>
+
+        <div className="fixed z-50 top-4 right-4">
+          <LanguageSelector />
         </div>
 
         <div className="fixed z-50 hidden bottom-6 right-6 sm:block">

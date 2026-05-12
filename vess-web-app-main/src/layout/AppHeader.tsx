@@ -4,6 +4,7 @@ import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import UserDropdown from "../components/header/UserDropdown";
 import { Menu } from "lucide-react";
+import LanguageSelector from "../components/common/LanguageSelector";
 
 const AppHeader: React.FC = () => {
   const { toggleMobileSidebar } = useSidebar();
@@ -36,6 +37,7 @@ const AppHeader: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <LanguageSelector />
           <ThemeToggleButton />
           <UserDropdown />
         </div>

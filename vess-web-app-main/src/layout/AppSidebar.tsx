@@ -1,18 +1,17 @@
 import { useCallback } from "react";
 import { Link, useLocation } from "react-router";
-
 import { MapIcon, MapPinnedIcon, UsersIcon } from "lucide-react";
 
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 // @ts-ignore: allow importing image without module declarations
 import img from "../assets/utfpr_img.png";
 // @ts-ignore: allow importing image without module declarations
 import img_dark from "../assets/utfpr_dark_img.png";
 
-
 type NavItem = {
-  name: string;
+  nameKey: "nav.map" | "nav.locationReport" | "nav.peopleReport" | "nav.userReport";
   icon: React.ReactNode;
   path: string;
   adminOnly?: boolean;
@@ -21,22 +20,24 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <MapIcon />,
-    name: "Mapa",
+    nameKey: "nav.map",
     path: "/mapa",
   },
   {
     icon: <MapPinnedIcon />,
-    name: "Relatório de Localizações",
+    nameKey: "nav.locationReport",
     path: "/relatorio-localizacao",
   },
-/*  {
-    icon: <UsersIcon />,
-    name: "Relatório de Pessoas",
-    path: "/relatorio-pessoas",
-  },*/
+  /*
   {
     icon: <UsersIcon />,
-    name: "Relatório de Usuarios",
+    nameKey: "nav.peopleReport",
+    path: "/relatorio-pessoas",
+  },
+  */
+  {
+    icon: <UsersIcon />,
+    nameKey: "nav.userReport",
     path: "/relatorio-usuarios",
     adminOnly: true,
   },
@@ -46,6 +47,7 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const isActive = useCallback(
     (path: string) => location.pathname === path,
@@ -71,7 +73,6 @@ const AppSidebar: React.FC = () => {
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Logo */}
       <div
         className={`py-8 flex ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
@@ -96,12 +97,7 @@ const AppSidebar: React.FC = () => {
               />
             </>
           ) : (
-            <img
-              src={img}
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+            <img src={img} alt="Logo" width={32} height={32} />
           )}
         </Link>
       </div>
@@ -109,14 +105,14 @@ const AppSidebar: React.FC = () => {
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         {(isExpanded || isHovered || isMobileOpen) && (
           <h3 className="mb-4 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
-            Menu
+            {t("nav.menu")}
           </h3>
         )}
 
         <nav className="mb-6">
           <ul className="flex flex-col gap-4">
             {accessibleNavItems.map((nav) => (
-              <li key={nav.name}>
+              <li key={nav.nameKey}>
                 <Link
                   to={nav.path}
                   className={`group relative flex items-center gap-3 rounded-md px-3 py-2.5 font-medium text-gray-600 dark:text-gray-400 duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-800 ${
@@ -135,12 +131,12 @@ const AppSidebar: React.FC = () => {
                     {nav.icon}
                   </span>
                   {(isExpanded || isHovered || isMobileOpen) && (
-                    <span className="text-sm">{nav.name}</span>
+                    <span className="text-sm">{t(nav.nameKey)}</span>
                   )}
 
                   {!isExpanded && !isHovered && !isMobileOpen && (
                     <span className="absolute left-full top-1/2 ml-4 -translate-y-1/2 rounded-md bg-gray-900 dark:bg-gray-700 px-2 py-1 text-xs font-medium text-white opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity duration-300 pointer-events-none z-50">
-                      {nav.name}
+                      {t(nav.nameKey)}
                     </span>
                   )}
                 </Link>

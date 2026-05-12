@@ -6,10 +6,12 @@ import Input from "./input/InputField";
 import Checkbox from "./input/Checkbox";
 import Button from "../ui/button/Button";
 import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 import { getBackendErrorMessage } from "../../services/api";
 
 export default function SignInForm() {
   const { loginUser } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const successMessage = location.state?.message;
@@ -31,10 +33,7 @@ export default function SignInForm() {
       navigate("/mapa");
     } catch (err: unknown) {
       console.error(err);
-      setError(
-        getBackendErrorMessage(err) ??
-          "Não foi possível entrar. Verifique sua conexão e tente novamente."
-      );
+      setError(getBackendErrorMessage(err) ?? t("auth.login.error"));
     } finally {
       setLoading(false);
     }
@@ -46,10 +45,10 @@ export default function SignInForm() {
         <div>
           <div className="mb-5 sm:mb-8">
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Entrar
+              {t("auth.login.title")}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Digite seu e-mail e senha para entrar!
+              {t("auth.login.subtitle")}
             </p>
           </div>
           <div>
@@ -63,7 +62,7 @@ export default function SignInForm() {
               <div className="space-y-6">
                 <div>
                   <Label>
-                    E-mail <span className="text-error-500">*</span>{" "}
+                    {t("common.email")} <span className="text-error-500">*</span>{" "}
                   </Label>
                   <Input
                     placeholder="info@gmail.com"
@@ -73,12 +72,12 @@ export default function SignInForm() {
                 </div>
                 <div>
                   <Label>
-                    Senha <span className="text-error-500">*</span>{" "}
+                    {t("common.password")} <span className="text-error-500">*</span>{" "}
                   </Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
-                      placeholder="Digite sua senha"
+                      placeholder={t("auth.login.passwordPlaceholder")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
@@ -95,18 +94,18 @@ export default function SignInForm() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                      Manter-me conectado
+                      {t("auth.login.keepConnected")}
                     </span>
                   </div>
                   <Link
                     to="/recuperar-senha"
                     className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
                   >
-                    Esqueci minha senha
+                    {t("auth.login.forgotPassword")}
                   </Link>
                 </div>
 
@@ -114,7 +113,7 @@ export default function SignInForm() {
 
                 <div>
                   <Button type="submit" className="w-full" size="sm" disabled={loading}>
-                    {loading ? "Entrando..." : "Entrar"}
+                    {loading ? t("auth.login.loading") : t("auth.login.title")}
                   </Button>
                 </div>
               </div>
@@ -122,12 +121,12 @@ export default function SignInForm() {
 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Não tem uma conta?{" "}
+                {t("auth.login.noAccount")}{" "}
                 <Link
                   to="/cadastro"
                   className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
                 >
-                  Cadastre-se
+                  {t("auth.login.register")}
                 </Link>
               </p>
             </div>

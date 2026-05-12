@@ -7,6 +7,7 @@ import AvaliacaoModal from "../../components/common/AvaliaçãoModal";
 
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 import axios from "axios";
 
 const customIcon = new L.Icon({
@@ -32,11 +33,10 @@ type AmostraResumo = {
 export default function MapPage() {
   const [amostrasResumo, setAmostrasResumo] = useState<AmostraResumo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedAvaliacaoId, setSelectedAvaliacaoId] = useState<number | null>(
-    null
-  );
+  const [selectedAvaliacaoId, setSelectedAvaliacaoId] = useState<number | null>(null);
 
   const { logoutUser } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,11 +56,7 @@ export default function MapPage() {
       }
     };
     fetchData();
-  }, [logoutUser]); 
-
-  const handleCloseModal = () => {
-    setSelectedAvaliacaoId(null);
-  };
+  }, [logoutUser]);
 
   const center: [number, number] = [-26.229, -52.671];
   const zoom = 13;
@@ -69,9 +65,7 @@ export default function MapPage() {
     return (
       <div className="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-green-50">
         <Loader className="animate-spin text-blue-600 mb-4" size={48} />
-        <p className="text-gray-700 font-semibold text-lg">
-          Carregando mapa...
-        </p>
+        <p className="text-gray-700 font-semibold text-lg">{t("map.loading")}</p>
       </div>
     );
   }
@@ -80,12 +74,7 @@ export default function MapPage() {
     <div className="w-full h-screen flex flex-col">
       <div className="flex-1 overflow-hidden">
         <div className="w-full h-full rounded-2xl overflow-hidden">
-          <MapContainer
-            center={center}
-            zoom={zoom}
-            scrollWheelZoom={true}
-            className="h-full w-full z-[1]"
-          >
+          <MapContainer center={center} zoom={zoom} scrollWheelZoom={true} className="h-full w-full z-[1]">
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
@@ -99,30 +88,18 @@ export default function MapPage() {
               if (isNaN(lat) || isNaN(lon)) return null;
 
               return (
-                <Marker
-                  key={amostra.id}
-                  position={[lat, lon]}
-                  icon={customIcon}
-                >
+                <Marker key={amostra.id} position={[lat, lon]} icon={customIcon}>
                   <Popup offset={[0, -10]} maxWidth={300}>
                     <div className="text-gray-800">
                       <p className="font-bold text-gray-900 text-lg mb-3 leading-tight text-center">
-                        {amostra.avaliacao?.nomeAvaliacao ??
-                          "Avaliação sem nome"}
+                        {amostra.avaliacao?.nomeAvaliacao ?? t("map.unnamedEvaluation")}
                       </p>
 
                       <div className="flex items-start gap-2 mb-4">
-                        <MapPin
-                          size={16}
-                          className="mt-0.5 text-blue-600 flex-shrink-0"
-                        />
+                        <MapPin size={16} className="mt-0.5 text-blue-600 flex-shrink-0" />
                         <div className="flex flex-col gap-0">
-                          <div className="font-medium text-sm">
-                            {amostra.nomeAmostra}
-                          </div>
-                          <div className="font-medium text-lg">
-                            {amostra.localizacao}
-                          </div>
+                          <div className="font-medium text-sm">{amostra.nomeAmostra}</div>
+                          <div className="font-medium text-lg">{amostra.localizacao}</div>
                         </div>
                       </div>
 
@@ -131,17 +108,12 @@ export default function MapPage() {
                           if (amostra.avaliacao?.id) {
                             setSelectedAvaliacaoId(amostra.avaliacao.id);
                           } else {
-                            console.warn(
-                              "Amostra sem avaliação associada:",
-                              amostra
-                            );
+                            console.warn("Amostra sem avaliação associada:", amostra);
                           }
                         }}
-                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800
-       text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2
-       transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
                       >
-                        Ver Detalhes
+                        {t("map.viewDetails")}
                         <ChevronRight size={16} />
                       </button>
                     </div>
@@ -154,10 +126,7 @@ export default function MapPage() {
       </div>
 
       {selectedAvaliacaoId && (
-        <AvaliacaoModal
-          avaliacaoId={selectedAvaliacaoId}
-          onClose={handleCloseModal}
-        />
+        <AvaliacaoModal avaliacaoId={selectedAvaliacaoId} onClose={() => setSelectedAvaliacaoId(null)} />
       )}
 
       <style>{`

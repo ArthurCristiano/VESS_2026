@@ -4,8 +4,10 @@ import Label from "./Label";
 import Input from "./input/InputField";
 import Button from "../ui/button/Button";
 import { forgotPassword } from "../../services/AuthService";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function ForgotPasswordForm() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -18,13 +20,9 @@ export default function ForgotPasswordForm() {
     setMessage("");
     try {
       await forgotPassword(email);
-      setMessage(
-        "Se o e-mail informado estiver cadastrado, você receberá as instruções em breve."
-      );
+      setMessage(t("auth.forgot.success"));
     } catch (err) {
-      setError(
-        "Não foi possível enviar o e-mail de recuperação. Tente novamente mais tarde."
-      );
+      setError(t("auth.forgot.error"));
     } finally {
       setLoading(false);
     }
@@ -36,16 +34,16 @@ export default function ForgotPasswordForm() {
         <div>
           <div className="mb-5 sm:mb-8">
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Recuperar senha
+              {t("auth.forgot.title")}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Informe seu e-mail cadastrado para receber o link de redefinição.
+              {t("auth.forgot.subtitle")}
             </p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label>
-                E-mail <span className="text-error-500">*</span>{" "}
+                {t("common.email")} <span className="text-error-500">*</span>{" "}
               </Label>
               <Input
                 placeholder="info@gmail.com"
@@ -58,13 +56,13 @@ export default function ForgotPasswordForm() {
             {message && <p className="text-sm text-green-500">{message}</p>}
             <div>
               <Button type="submit" className="w-full" size="sm" disabled={loading}>
-                {loading ? "Enviando..." : "Enviar"}
+                {loading ? t("auth.forgot.loading") : t("auth.forgot.submit")}
               </Button>
             </div>
           </form>
           <div className="mt-5">
             <Link to="/login" className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400">
-              Voltar para login
+              {t("auth.forgot.backToLogin")}
             </Link>
           </div>
         </div>
