@@ -12,8 +12,7 @@ import img from "../assets/utfpr_img.png";
 import img_dark from "../assets/utfpr_dark_img.png";
 
 type NavItem = {
-    nameKey?: "nav.map" | "nav.locationReport" | "nav.peopleReport" | "nav.userReport" | "nav.regions";
-    label?: string;
+    nameKey: "nav.map" | "nav.locationReport" | "nav.peopleReport" | "nav.userReport" | "nav.adminUsers" | "nav.regions";
     icon: React.ReactNode;
     path: string;
     adminOnly?: boolean;
@@ -32,7 +31,7 @@ const navItems: NavItem[] = [
     },
     {
         icon: <UsersIcon />,
-        label: "Cadastro de usuários",
+        nameKey: "nav.adminUsers",
         path: "/admin/usuarios",
         adminOnly: true,
     },
@@ -55,9 +54,7 @@ const AppSidebar: React.FC = () => {
         [location.pathname]
     );
 
-    const getNavLabel = (nav: NavItem) => {
-        return nav.label ?? (nav.nameKey ? t(nav.nameKey) : "");
-    };
+    const getNavLabel = (nav: NavItem) => t(nav.nameKey);
 
     const accessibleNavItems = navItems.filter((item) => {
         return !item.adminOnly || isAdmin;

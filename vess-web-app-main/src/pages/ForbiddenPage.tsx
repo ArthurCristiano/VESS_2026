@@ -2,10 +2,19 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShieldOff, ArrowLeft, Home } from "lucide-react";
 import { useRoles } from "../hooks/useRoles";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function ForbiddenPage() {
     const navigate = useNavigate();
     const { role } = useRoles();
+    const { t } = useLanguage();
+
+    const roleLabel =
+        role === "ADMINISTRADOR"
+            ? t("role.admin")
+            : role === "PESQUISADOR"
+                ? t("role.researcher")
+                : t("role.visitor");
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
@@ -21,20 +30,16 @@ export default function ForbiddenPage() {
                 </p>
 
                 <h1 className="text-2xl font-semibold text-gray-800 dark:text-white/90 mb-3">
-                    Acesso negado
+                    {t("forbidden.title")}
                 </h1>
 
                 <p className="text-gray-500 dark:text-gray-400 mb-2">
-                    Você não tem permissão para acessar esta página.
+                    {t("forbidden.message")}
                 </p>
                 <p className="text-sm text-gray-400 dark:text-gray-500 mb-8">
-                    Perfil atual:{" "}
+                    {t("forbidden.currentProfile")}{" "}
                     <span className="font-medium text-gray-600 dark:text-gray-300">
-            {role === "ADMINISTRADOR"
-                ? "Administrador"
-                : role === "PESQUISADOR"
-                    ? "Pesquisador"
-                    : "Visitante"}
+            {roleLabel}
           </span>
                 </p>
 
@@ -44,14 +49,14 @@ export default function ForbiddenPage() {
                         className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700 transition-colors"
                     >
                         <ArrowLeft size={16} />
-                        Voltar
+                        {t("forbidden.back")}
                     </button>
                     <Link
                         to="/mapa"
                         className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
                     >
                         <Home size={16} />
-                        Ir para o início
+                        {t("forbidden.home")}
                     </Link>
                 </div>
             </div>

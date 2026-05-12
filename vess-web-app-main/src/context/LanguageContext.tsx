@@ -20,6 +20,7 @@ type TranslationKey =
   | "common.cancel"
   | "common.saveChanges"
   | "common.saving"
+  | "common.refresh"
   | "common.closeModal"
   | "common.yes"
   | "common.no"
@@ -31,30 +32,29 @@ type TranslationKey =
   | "nav.locationReport"
   | "nav.peopleReport"
   | "nav.userReport"
+  | "nav.adminUsers"
   | "nav.regions"
   | "regions.title"
   | "regions.create"
   | "regions.loading"
-  | "regions.errorLoad"
+  | "regions.loadError"
   | "regions.type"
   | "regions.description"
+  | "regions.nameRequired"
+  | "regions.namePlaceholder"
+  | "regions.typeRequired"
+  | "regions.descriptionPlaceholder"
   | "regions.areaAndColor"
-  | "regions.pointsCounter"
+  | "regions.pointsCount"
   | "regions.removeLastPoint"
   | "regions.resetPoints"
-  | "regions.submit"
-  | "regions.popupType"
-  | "regions.popupDescription"
-  | "regions.placeholderName"
-  | "regions.placeholderDescription"
-  | "regions.modalTitle"
-  | "regions.validation.pointsRange"
-  | "regions.validation.nameLength"
-  | "regions.validation.descriptionLength"
-  | "regions.validation.colorFormat"
-  | "regions.feedback.maxPoints"
-  | "regions.feedback.created"
-  | "regions.feedback.createError"
+  | "regions.maxPointsReached"
+  | "regions.pointsValidation"
+  | "regions.nameValidation"
+  | "regions.descriptionValidation"
+  | "regions.colorValidation"
+  | "regions.createSuccess"
+  | "regions.createError"
   | "regions.type.city"
   | "regions.type.state"
   | "regions.type.stateRegion"
@@ -177,6 +177,36 @@ type TranslationKey =
   | "reports.viewDetails"
   | "reports.details"
   | "reports.detailsFor"
+  | "adminUsers.title"
+  | "adminUsers.subtitle"
+  | "adminUsers.profile"
+  | "adminUsers.status"
+  | "adminUsers.actions"
+  | "adminUsers.currentProfile"
+  | "adminUsers.manage"
+  | "adminUsers.inactivate"
+  | "adminUsers.inactivateUser"
+  | "adminUsers.viewEditTitle"
+  | "adminUsers.cannotInactivateSelf"
+  | "adminUsers.inactivateTitle"
+  | "adminUsers.alreadyInactive"
+  | "adminUsers.confirmInactivate"
+  | "adminUsers.loadUserError"
+  | "adminUsers.updateSuccess"
+  | "adminUsers.updateError"
+  | "adminUsers.inactivateSuccess"
+  | "adminUsers.inactivateError"
+  | "role.admin"
+  | "role.researcher"
+  | "role.visitor"
+  | "status.active"
+  | "status.inactive"
+  | "status.pendingEmail"
+  | "forbidden.title"
+  | "forbidden.message"
+  | "forbidden.currentProfile"
+  | "forbidden.back"
+  | "forbidden.home"
   | "modal.evaluationDetails"
   | "modal.loadingInfo"
   | "modal.evaluator"
@@ -222,6 +252,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "common.cancel": "Cancelar",
     "common.saveChanges": "Salvar Alterações",
     "common.saving": "Salvando...",
+    "common.refresh": "Atualizar",
     "common.closeModal": "Fechar modal",
     "common.yes": "Sim",
     "common.no": "Não",
@@ -233,30 +264,29 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "nav.locationReport": "Relatório de Localizações",
     "nav.peopleReport": "Relatório de Pessoas",
     "nav.userReport": "Relatório de Usuários",
+    "nav.adminUsers": "Cadastro de usuários",
     "nav.regions": "Cadastro de Regiões",
     "regions.title": "Regiões Cadastradas",
     "regions.create": "Cadastrar Região",
     "regions.loading": "Carregando regiões...",
-    "regions.errorLoad": "Falha ao carregar as regiões.",
+    "regions.loadError": "Falha ao carregar as regiões.",
     "regions.type": "Tipo",
     "regions.description": "Descrição",
+    "regions.nameRequired": "Nome *",
+    "regions.namePlaceholder": "Ex.: Sudoeste do Paraná",
+    "regions.typeRequired": "Tipo *",
+    "regions.descriptionPlaceholder": "Descrição opcional da região",
     "regions.areaAndColor": "Área da Região e Cor (clique no mapa para adicionar pontos)",
-    "regions.pointsCounter": "{count}/{max} pontos",
+    "regions.pointsCount": "{count}/{max} pontos",
     "regions.removeLastPoint": "Remover Último Ponto",
     "regions.resetPoints": "Resetar Pontos",
-    "regions.submit": "Cadastrar Região",
-    "regions.popupType": "Tipo:",
-    "regions.popupDescription": "Descrição:",
-    "regions.placeholderName": "Ex.: Sudoeste do Paraná",
-    "regions.placeholderDescription": "Descrição opcional da região",
-    "regions.modalTitle": "Cadastrar Região",
-    "regions.validation.pointsRange": "A região deve ter entre 3 e 10 pontos.",
-    "regions.validation.nameLength": "O nome deve ter entre 2 e 100 caracteres.",
-    "regions.validation.descriptionLength": "A descrição deve ter no máximo 500 caracteres.",
-    "regions.validation.colorFormat": "A cor deve estar no formato #RRGGBB.",
-    "regions.feedback.maxPoints": "Máximo de 10 pontos atingido.",
-    "regions.feedback.created": "Região cadastrada com sucesso.",
-    "regions.feedback.createError": "Não foi possível cadastrar a região.",
+    "regions.maxPointsReached": "Máximo de {max} pontos atingido.",
+    "regions.pointsValidation": "A região deve ter entre 3 e {max} pontos.",
+    "regions.nameValidation": "O nome deve ter entre 2 e 100 caracteres.",
+    "regions.descriptionValidation": "A descrição deve ter no máximo 500 caracteres.",
+    "regions.colorValidation": "A cor deve estar no formato #RRGGBB.",
+    "regions.createSuccess": "Região cadastrada com sucesso.",
+    "regions.createError": "Não foi possível cadastrar a região.",
     "regions.type.city": "Cidade",
     "regions.type.state": "Estado",
     "regions.type.stateRegion": "Região de Estado",
@@ -379,6 +409,36 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "reports.viewDetails": "Visualizar detalhes",
     "reports.details": "Detalhes",
     "reports.detailsFor": "Detalhes de: {name}",
+    "adminUsers.title": "Cadastro de usuários",
+    "adminUsers.subtitle": "Visualize e gerencie os usuários cadastrados no sistema.",
+    "adminUsers.profile": "Perfil",
+    "adminUsers.status": "Status",
+    "adminUsers.actions": "Ações",
+    "adminUsers.currentProfile": "Perfil atual",
+    "adminUsers.manage": "Gerenciar",
+    "adminUsers.inactivate": "Inativar",
+    "adminUsers.inactivateUser": "Inativar usuário",
+    "adminUsers.viewEditTitle": "Visualizar e editar usuário",
+    "adminUsers.cannotInactivateSelf": "Você não pode inativar o próprio usuário logado.",
+    "adminUsers.inactivateTitle": "Você não pode inativar o próprio usuário",
+    "adminUsers.alreadyInactive": "Este usuário já está inativo.",
+    "adminUsers.confirmInactivate": "Inativar o usuário {name}? Ele não poderá mais acessar o sistema.",
+    "adminUsers.loadUserError": "Falha ao carregar os dados do usuário.",
+    "adminUsers.updateSuccess": "Usuário atualizado com sucesso.",
+    "adminUsers.updateError": "Falha ao atualizar o usuário.",
+    "adminUsers.inactivateSuccess": "Usuário inativado com sucesso.",
+    "adminUsers.inactivateError": "Falha ao inativar o usuário.",
+    "role.admin": "Administrador",
+    "role.researcher": "Pesquisador",
+    "role.visitor": "Visitante",
+    "status.active": "Ativo",
+    "status.inactive": "Inativo",
+    "status.pendingEmail": "Pendente e-mail",
+    "forbidden.title": "Acesso negado",
+    "forbidden.message": "Você não tem permissão para acessar esta página.",
+    "forbidden.currentProfile": "Perfil atual:",
+    "forbidden.back": "Voltar",
+    "forbidden.home": "Ir para o início",
     "modal.evaluationDetails": "Detalhes da Avaliação",
     "modal.loadingInfo": "Carregando informações...",
     "modal.evaluator": "Avaliador",
@@ -414,6 +474,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "common.cancel": "Cancel",
     "common.saveChanges": "Save Changes",
     "common.saving": "Saving...",
+    "common.refresh": "Refresh",
     "common.closeModal": "Close modal",
     "common.yes": "Yes",
     "common.no": "No",
@@ -425,30 +486,29 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "nav.locationReport": "Location Report",
     "nav.peopleReport": "People Report",
     "nav.userReport": "User Report",
+    "nav.adminUsers": "User Management",
     "nav.regions": "Regions",
     "regions.title": "Registered Regions",
-    "regions.create": "Create Region",
+    "regions.create": "Register Region",
     "regions.loading": "Loading regions...",
-    "regions.errorLoad": "Failed to load regions.",
+    "regions.loadError": "Failed to load regions.",
     "regions.type": "Type",
     "regions.description": "Description",
-    "regions.areaAndColor": "Region Area and Color (click on map to add points)",
-    "regions.pointsCounter": "{count}/{max} points",
+    "regions.nameRequired": "Name *",
+    "regions.namePlaceholder": "E.g.: Southwest of Parana",
+    "regions.typeRequired": "Type *",
+    "regions.descriptionPlaceholder": "Optional region description",
+    "regions.areaAndColor": "Region Area and Color (click the map to add points)",
+    "regions.pointsCount": "{count}/{max} points",
     "regions.removeLastPoint": "Remove Last Point",
     "regions.resetPoints": "Reset Points",
-    "regions.submit": "Create Region",
-    "regions.popupType": "Type:",
-    "regions.popupDescription": "Description:",
-    "regions.placeholderName": "e.g.: Southwest of Paraná",
-    "regions.placeholderDescription": "Optional region description",
-    "regions.modalTitle": "Create Region",
-    "regions.validation.pointsRange": "Region must have between 3 and 10 points.",
-    "regions.validation.nameLength": "Name must be between 2 and 100 characters.",
-    "regions.validation.descriptionLength": "Description must be at most 500 characters.",
-    "regions.validation.colorFormat": "Color must be in #RRGGBB format.",
-    "regions.feedback.maxPoints": "Maximum of 10 points reached.",
-    "regions.feedback.created": "Region created successfully.",
-    "regions.feedback.createError": "Could not create region.",
+    "regions.maxPointsReached": "Maximum of {max} points reached.",
+    "regions.pointsValidation": "The region must have between 3 and {max} points.",
+    "regions.nameValidation": "The name must be between 2 and 100 characters.",
+    "regions.descriptionValidation": "The description must be at most 500 characters.",
+    "regions.colorValidation": "The color must be in #RRGGBB format.",
+    "regions.createSuccess": "Region registered successfully.",
+    "regions.createError": "Unable to register the region.",
     "regions.type.city": "City",
     "regions.type.state": "State",
     "regions.type.stateRegion": "State Region",
@@ -571,6 +631,36 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "reports.viewDetails": "View details",
     "reports.details": "Details",
     "reports.detailsFor": "Details for: {name}",
+    "adminUsers.title": "User Management",
+    "adminUsers.subtitle": "View and manage users registered in the system.",
+    "adminUsers.profile": "Profile",
+    "adminUsers.status": "Status",
+    "adminUsers.actions": "Actions",
+    "adminUsers.currentProfile": "Current profile",
+    "adminUsers.manage": "Manage",
+    "adminUsers.inactivate": "Inactivate",
+    "adminUsers.inactivateUser": "Inactivate user",
+    "adminUsers.viewEditTitle": "View and edit user",
+    "adminUsers.cannotInactivateSelf": "You cannot inactivate your own logged-in user.",
+    "adminUsers.inactivateTitle": "You cannot inactivate your own user",
+    "adminUsers.alreadyInactive": "This user is already inactive.",
+    "adminUsers.confirmInactivate": "Inactivate user {name}? They will no longer be able to access the system.",
+    "adminUsers.loadUserError": "Failed to load user data.",
+    "adminUsers.updateSuccess": "User updated successfully.",
+    "adminUsers.updateError": "Failed to update the user.",
+    "adminUsers.inactivateSuccess": "User inactivated successfully.",
+    "adminUsers.inactivateError": "Failed to inactivate the user.",
+    "role.admin": "Administrator",
+    "role.researcher": "Researcher",
+    "role.visitor": "Visitor",
+    "status.active": "Active",
+    "status.inactive": "Inactive",
+    "status.pendingEmail": "Email pending",
+    "forbidden.title": "Access denied",
+    "forbidden.message": "You do not have permission to access this page.",
+    "forbidden.currentProfile": "Current profile:",
+    "forbidden.back": "Back",
+    "forbidden.home": "Go to home",
     "modal.evaluationDetails": "Evaluation Details",
     "modal.loadingInfo": "Loading information...",
     "modal.evaluator": "Evaluator",
@@ -606,6 +696,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "common.cancel": "Cancelar",
     "common.saveChanges": "Guardar Cambios",
     "common.saving": "Guardando...",
+    "common.refresh": "Actualizar",
     "common.closeModal": "Cerrar modal",
     "common.yes": "Sí",
     "common.no": "No",
@@ -617,34 +708,33 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "nav.locationReport": "Informe de Ubicaciones",
     "nav.peopleReport": "Informe de Personas",
     "nav.userReport": "Informe de Usuarios",
+    "nav.adminUsers": "Gestión de usuarios",
     "nav.regions": "Registro de Regiones",
-    "regions.title": "Regiones Cadastradas",
+    "regions.title": "Regiones Registradas",
     "regions.create": "Registrar Región",
     "regions.loading": "Cargando regiones...",
-    "regions.errorLoad": "No se pudieron cargar las regiones.",
+    "regions.loadError": "Error al cargar las regiones.",
     "regions.type": "Tipo",
     "regions.description": "Descripción",
-    "regions.areaAndColor": "Área y color de la región (haz clic en el mapa para agregar puntos)",
-    "regions.pointsCounter": "{count}/{max} puntos",
-    "regions.removeLastPoint": "Quitar Último Punto",
+    "regions.nameRequired": "Nombre *",
+    "regions.namePlaceholder": "Ej.: Suroeste de Paraná",
+    "regions.typeRequired": "Tipo *",
+    "regions.descriptionPlaceholder": "Descripción opcional de la región",
+    "regions.areaAndColor": "Área de la Región y Color (haz clic en el mapa para agregar puntos)",
+    "regions.pointsCount": "{count}/{max} puntos",
+    "regions.removeLastPoint": "Eliminar Último Punto",
     "regions.resetPoints": "Restablecer Puntos",
-    "regions.submit": "Registrar Región",
-    "regions.popupType": "Tipo:",
-    "regions.popupDescription": "Descripción:",
-    "regions.placeholderName": "Ej.: Suroeste de Paraná",
-    "regions.placeholderDescription": "Descripción opcional de la región",
-    "regions.modalTitle": "Registrar Región",
-    "regions.validation.pointsRange": "La región debe tener entre 3 y 10 puntos.",
-    "regions.validation.nameLength": "El nombre debe tener entre 2 y 100 caracteres.",
-    "regions.validation.descriptionLength": "La descripción debe tener como máximo 500 caracteres.",
-    "regions.validation.colorFormat": "El color debe tener el formato #RRGGBB.",
-    "regions.feedback.maxPoints": "Máximo de 10 puntos alcanzado.",
-    "regions.feedback.created": "Región registrada con éxito.",
-    "regions.feedback.createError": "No se pudo registrar la región.",
+    "regions.maxPointsReached": "Máximo de {max} puntos alcanzado.",
+    "regions.pointsValidation": "La región debe tener entre 3 y {max} puntos.",
+    "regions.nameValidation": "El nombre debe tener entre 2 y 100 caracteres.",
+    "regions.descriptionValidation": "La descripción debe tener como máximo 500 caracteres.",
+    "regions.colorValidation": "El color debe estar en formato #RRGGBB.",
+    "regions.createSuccess": "Región registrada con éxito.",
+    "regions.createError": "No fue posible registrar la región.",
     "regions.type.city": "Ciudad",
     "regions.type.state": "Estado",
-    "regions.type.stateRegion": "Región del Estado",
-    "regions.type.projectArea": "Área del Proyecto",
+    "regions.type.stateRegion": "Región de Estado",
+    "regions.type.projectArea": "Área de Proyecto",
     "regions.type.other": "Otro",
     "user.signIn": "Entrar",
     "user.profile": "Perfil",
@@ -763,6 +853,36 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "reports.viewDetails": "Ver detalles",
     "reports.details": "Detalles",
     "reports.detailsFor": "Detalles de: {name}",
+    "adminUsers.title": "Gestión de usuarios",
+    "adminUsers.subtitle": "Visualiza y gestiona los usuarios registrados en el sistema.",
+    "adminUsers.profile": "Perfil",
+    "adminUsers.status": "Estado",
+    "adminUsers.actions": "Acciones",
+    "adminUsers.currentProfile": "Perfil actual",
+    "adminUsers.manage": "Gestionar",
+    "adminUsers.inactivate": "Inactivar",
+    "adminUsers.inactivateUser": "Inactivar usuario",
+    "adminUsers.viewEditTitle": "Ver y editar usuario",
+    "adminUsers.cannotInactivateSelf": "No puedes inactivar tu propio usuario conectado.",
+    "adminUsers.inactivateTitle": "No puedes inactivar tu propio usuario",
+    "adminUsers.alreadyInactive": "Este usuario ya está inactivo.",
+    "adminUsers.confirmInactivate": "¿Inactivar al usuario {name}? Ya no podrá acceder al sistema.",
+    "adminUsers.loadUserError": "Error al cargar los datos del usuario.",
+    "adminUsers.updateSuccess": "Usuario actualizado con éxito.",
+    "adminUsers.updateError": "Error al actualizar el usuario.",
+    "adminUsers.inactivateSuccess": "Usuario inactivado con éxito.",
+    "adminUsers.inactivateError": "Error al inactivar el usuario.",
+    "role.admin": "Administrador",
+    "role.researcher": "Investigador",
+    "role.visitor": "Visitante",
+    "status.active": "Activo",
+    "status.inactive": "Inactivo",
+    "status.pendingEmail": "Correo pendiente",
+    "forbidden.title": "Acceso denegado",
+    "forbidden.message": "No tienes permiso para acceder a esta página.",
+    "forbidden.currentProfile": "Perfil actual:",
+    "forbidden.back": "Volver",
+    "forbidden.home": "Ir al inicio",
     "modal.evaluationDetails": "Detalles de la Evaluación",
     "modal.loadingInfo": "Cargando información...",
     "modal.evaluator": "Evaluador",
