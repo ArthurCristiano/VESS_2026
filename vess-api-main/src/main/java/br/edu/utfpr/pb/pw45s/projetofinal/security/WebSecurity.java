@@ -59,6 +59,10 @@ public class WebSecurity {
                         .requestMatchers(HttpMethod.GET,  "/auth/reset-password/validate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
                         .requestMatchers(HttpMethod.POST, "/avaliacao").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/avaliacao", "/avaliacao/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/avaliacao/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/avaliacao/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/avaliacao/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/configuracao").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/configuracao/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/score/block").permitAll()
@@ -98,7 +102,7 @@ public class WebSecurity {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8641/", "https://vess.app.pb.utfpr.edu.br/"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Origin"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Origin", "X-API-Key"));
         configuration.setExposedHeaders(List.of("Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
