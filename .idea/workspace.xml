@@ -5,13 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e5d35abb-7d3c-41fd-85aa-020586ce0e36" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/vess-web-app-main/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/components/common/Modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/components/common/Modal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/components/header/UserDropdown.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/components/header/UserDropdown.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/layout/AppHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/layout/AppHeader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/main.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/pages/AuthPages/AuthPageLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/pages/AuthPages/AuthPageLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/controller/AvaliacaoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/controller/AvaliacaoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/dto/AvaliacaoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/dto/AvaliacaoDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/handler/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/handler/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/model/Avaliacao.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/model/Avaliacao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/repository/AvaliacaoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/repository/AvaliacaoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/security/WebSecurity.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/security/WebSecurity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/service/AvaliacaoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/service/AvaliacaoService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,9 +55,10 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "VESS-29",
+    "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/Jeff",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -68,6 +70,11 @@
     "settings.editor.selected.configurable": "project.propVCSSupport.Mappings",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
   }
 }]]></component>
   <component name="RunManager">

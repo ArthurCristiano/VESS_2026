@@ -1,6 +1,8 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.model;
 
+import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.AvaliacaoStatus;
 import br.edu.utfpr.pb.pw45s.projetofinal.shared.Identifiable;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -50,7 +52,14 @@ public class Avaliacao implements Identifiable<Long> {
     @JsonManagedReference
     private List<Amostra> amostras;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "regiao_id")
+    @JsonIgnoreProperties({"pontos", "hibernateLazyInitializer", "handler"})
+    private Regiao regiao;
+
     private String avaliador;
     private String informacoes;
-    private String status;
+
+    @Column(name = "status")
+    private AvaliacaoStatus status = AvaliacaoStatus.ATIVO;
 }

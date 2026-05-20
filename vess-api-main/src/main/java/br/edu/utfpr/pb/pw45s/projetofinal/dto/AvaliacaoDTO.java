@@ -19,6 +19,8 @@ public class AvaliacaoDTO {
     private Float escoreMedioGeral;
     private String avaliador;
     private String informacoes;
+    /** Aceito na ingestão externa; valores desconhecidos são normalizados para ATIVO no serviço. */
     private String status;
+    private Long regiaoId;
     private List<AmostraDTO> amostras;
 }
