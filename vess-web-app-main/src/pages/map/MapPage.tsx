@@ -1,8 +1,8 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import React, { useState, useEffect } from "react";
-import { Loader, MapPin, ChevronRight } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { ChevronRight, Filter, Loader, MapPin } from "lucide-react";
 import AvaliacaoModal from "../../components/common/AvaliaçãoModal";
 
 import api from "../../services/api";
@@ -10,15 +10,16 @@ import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import axios from "axios";
 
-const customIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/854/854878.png",
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  shadowSize: [41, 41],
-  shadowAnchor: [13, 41],
-});
+type RegiaoResumo = {
+  id: number;
+  nome: string;
+  tipo: string;
+  corHex?: string;
+};
+
+type Regiao = RegiaoResumo & {
+  ativa: boolean;
+};
 
 type AmostraResumo = {
   id: number;
@@ -27,12 +28,55 @@ type AmostraResumo = {
   avaliacao: {
     id: number;
     nomeAvaliacao: string;
+    escoreMedioGeral?: number | null;
+    status: "ATIVO" | "INATIVO";
+    regiao?: RegiaoResumo | null;
   };
+};
+
+const getScoreColor = (score?: number | null) => {
+  if (score == null || Number.isNaN(score)) return "#6B7280";
+  if (score <= 1.5) return "#16A34A";
+  if (score <= 2.5) return "#84CC16";
+  if (score <= 3.5) return "#FACC15";
+  if (score <= 4.5) return "#F97316";
+  return "#DC2626";
+};
+
+const createScoreIcon = (score?: number | null) => {
+  const color = getScoreColor(score);
+  const label = score == null || Number.isNaN(score) ? "-" : score.toFixed(1);
+
+  return L.divIcon({
+    className: "vess-score-marker",
+    html: `
+      <div class="vess-score-pin" style="background:${color}">
+        <span>${label}</span>
+      </div>
+    `,
+    iconSize: [38, 46],
+    iconAnchor: [19, 46],
+    popupAnchor: [0, -42],
+  });
+};
+
+const parseLocation = (localizacao: string): [number, number] | null => {
+  const parts = localizacao.split(",");
+  if (parts.length !== 2) return null;
+
+  const lat = Number.parseFloat(parts[0].trim());
+  const lon = Number.parseFloat(parts[1].trim());
+  if (Number.isNaN(lat) || Number.isNaN(lon)) return null;
+
+  return [lat, lon];
 };
 
 export default function MapPage() {
   const [amostrasResumo, setAmostrasResumo] = useState<AmostraResumo[]>([]);
+  const [regioes, setRegioes] = useState<Regiao[]>([]);
+  const [selectedRegiaoId, setSelectedRegiaoId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [selectedAvaliacaoId, setSelectedAvaliacaoId] = useState<number | null>(null);
 
   const { logoutUser } = useAuth();
@@ -41,12 +85,16 @@ export default function MapPage() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
+      setLoadError(false);
       try {
-        const response = await api.get("/amostra/resumo-mapa");
-        setAmostrasResumo(response.data);
-        console.log("Amostras resumo carregadas:", response.data);
+        const [amostrasResponse, regioesResponse] = await Promise.all([
+          api.get<AmostraResumo[]>("/amostra/resumo-mapa"),
+          api.get<Regiao[]>("/regioes/ativas"),
+        ]);
+        setAmostrasResumo(amostrasResponse.data);
+        setRegioes(regioesResponse.data);
       } catch (error) {
-        console.error("Erro ao buscar resumo para o mapa:", error);
+        setLoadError(true);
 
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           logoutUser();
@@ -58,71 +106,128 @@ export default function MapPage() {
     fetchData();
   }, [logoutUser]);
 
-  const center: [number, number] = [-26.229, -52.671];
-  const zoom = 13;
+  const filteredAmostras = useMemo(() => {
+    return amostrasResumo.filter((amostra) => {
+      if (amostra.avaliacao?.status !== "ATIVO") return false;
+      if (!selectedRegiaoId) return true;
+      return String(amostra.avaliacao?.regiao?.id ?? "") === selectedRegiaoId;
+    });
+  }, [amostrasResumo, selectedRegiaoId]);
+
+  const markers = useMemo(() => {
+    return filteredAmostras
+      .map((amostra) => {
+        const position = parseLocation(amostra.localizacao);
+        return position ? { amostra, position } : null;
+      })
+      .filter((item): item is { amostra: AmostraResumo; position: [number, number] } => Boolean(item));
+  }, [filteredAmostras]);
+
+  const center: [number, number] = markers[0]?.position ?? [-26.229, -52.671];
+  const zoom = markers.length > 0 ? 12 : 13;
 
   if (isLoading) {
     return (
-      <div className="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-green-50">
+      <div className="w-full h-[calc(100vh-6rem)] flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
         <Loader className="animate-spin text-blue-600 mb-4" size={48} />
-        <p className="text-gray-700 font-semibold text-lg">{t("map.loading")}</p>
+        <p className="text-gray-700 dark:text-gray-200 font-semibold text-lg">{t("map.loading")}</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-screen flex flex-col">
-      <div className="flex-1 overflow-hidden">
-        <div className="w-full h-full rounded-2xl overflow-hidden">
-          <MapContainer center={center} zoom={zoom} scrollWheelZoom={true} className="h-full w-full z-[1]">
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-            />
-
-            {amostrasResumo.map((amostra) => {
-              const parts = amostra.localizacao.split(",");
-              if (parts.length !== 2) return null;
-              const lat = parseFloat(parts[0].trim());
-              const lon = parseFloat(parts[1].trim());
-              if (isNaN(lat) || isNaN(lon)) return null;
-
-              return (
-                <Marker key={amostra.id} position={[lat, lon]} icon={customIcon}>
-                  <Popup offset={[0, -10]} maxWidth={300}>
-                    <div className="text-gray-800">
-                      <p className="font-bold text-gray-900 text-lg mb-3 leading-tight text-center">
-                        {amostra.avaliacao?.nomeAvaliacao ?? t("map.unnamedEvaluation")}
-                      </p>
-
-                      <div className="flex items-start gap-2 mb-4">
-                        <MapPin size={16} className="mt-0.5 text-blue-600 flex-shrink-0" />
-                        <div className="flex flex-col gap-0">
-                          <div className="font-medium text-sm">{amostra.nomeAmostra}</div>
-                          <div className="font-medium text-lg">{amostra.localizacao}</div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          if (amostra.avaliacao?.id) {
-                            setSelectedAvaliacaoId(amostra.avaliacao.id);
-                          } else {
-                            console.warn("Amostra sem avaliação associada:", amostra);
-                          }
-                        }}
-                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
-                      >
-                        {t("map.viewDetails")}
-                        <ChevronRight size={16} />
-                      </button>
-                    </div>
-                  </Popup>
-                </Marker>
-              );
-            })}
-          </MapContainer>
+    <div className="w-full h-[calc(100vh-6rem)] flex flex-col gap-4">
+      <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">{t("map.title")}</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {markers.length} {t("map.visibleEvaluations")}
+          </p>
         </div>
+
+        <label className="flex w-full flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300 sm:max-w-xs">
+          <span className="flex items-center gap-2">
+            <Filter size={16} />
+            {t("map.regionFilter")}
+          </span>
+          <select
+            value={selectedRegiaoId}
+            onChange={(event) => setSelectedRegiaoId(event.target.value)}
+            className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+          >
+            <option value="">{t("map.allRegions")}</option>
+            {regioes.map((regiao) => (
+              <option key={regiao.id} value={regiao.id}>
+                {regiao.nome}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {loadError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300">
+          {t("map.loadError")}
+        </div>
+      )}
+
+      <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800">
+        <MapContainer center={center} zoom={zoom} scrollWheelZoom={true} className="h-full w-full z-[1]">
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+          />
+
+          {markers.map(({ amostra, position }) => (
+            <Marker
+              key={amostra.id}
+              position={position}
+              icon={createScoreIcon(amostra.avaliacao?.escoreMedioGeral)}
+            >
+              <Popup offset={[0, -10]} maxWidth={300}>
+                <div className="text-gray-800">
+                  <p className="font-bold text-gray-900 text-lg mb-3 leading-tight text-center">
+                    {amostra.avaliacao?.nomeAvaliacao ?? t("map.unnamedEvaluation")}
+                  </p>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-start gap-2">
+                      <MapPin size={16} className="mt-0.5 text-blue-600 flex-shrink-0" />
+                      <div>
+                        <div className="font-medium">{t("map.sample")}: {amostra.nomeAmostra}</div>
+                        <div>{t("map.location")}: {amostra.localizacao}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="font-medium">{t("map.score")}:</span>{" "}
+                      {amostra.avaliacao?.escoreMedioGeral?.toFixed(1) ?? t("common.notInformed")}
+                    </div>
+                    <div>
+                      <span className="font-medium">{t("map.region")}:</span>{" "}
+                      {amostra.avaliacao?.regiao?.nome ?? t("common.notInformed")}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedAvaliacaoId(amostra.avaliacao.id)}
+                    className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow-md active:scale-95"
+                  >
+                    {t("map.viewDetails")}
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+
+        {!loadError && markers.length === 0 && (
+          <div className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center">
+            <div className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
+              {t("map.noEvaluations")}
+            </div>
+          </div>
+        )}
       </div>
 
       {selectedAvaliacaoId && (
@@ -130,16 +235,37 @@ export default function MapPage() {
       )}
 
       <style>{`
-         .leaflet-container {
-           z-index: 1 !important;
-         }
-         .leaflet-pane {
-           z-index: 2 !important;
-         }
-         .leaflet-popup {
-           z-index: 3 !important;
-         }
-       `}</style>
+        .leaflet-container {
+          z-index: 1 !important;
+        }
+        .leaflet-pane {
+          z-index: 2 !important;
+        }
+        .leaflet-popup {
+          z-index: 3 !important;
+        }
+        .vess-score-marker {
+          background: transparent;
+          border: 0;
+        }
+        .vess-score-pin {
+          align-items: center;
+          border: 2px solid #ffffff;
+          border-radius: 999px 999px 999px 4px;
+          box-shadow: 0 8px 16px rgba(15, 23, 42, 0.28);
+          color: #111827;
+          display: flex;
+          font-size: 12px;
+          font-weight: 700;
+          height: 34px;
+          justify-content: center;
+          transform: rotate(-45deg);
+          width: 34px;
+        }
+        .vess-score-pin span {
+          transform: rotate(45deg);
+        }
+      `}</style>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class AmostraService extends CrudService<Long, Amostra, AmostraRepository> {
 
-    public List<Amostra> findFirstSampleOfEachAvaliacao() {
-        return repository.findFirstSampleOfEachAvaliacaoWithLocation();
+    public List<Amostra> findFirstActiveSampleOfEachAvaliacao() {
+        return repository.findFirstActiveSampleOfEachAvaliacaoWithLocation();
     }
 }

@@ -146,9 +146,19 @@ type TranslationKey =
   | "profile.permissionError"
   | "profile.loading"
   | "profile.notFound"
+  | "map.title"
   | "map.loading"
   | "map.unnamedEvaluation"
   | "map.viewDetails"
+  | "map.regionFilter"
+  | "map.allRegions"
+  | "map.visibleEvaluations"
+  | "map.noEvaluations"
+  | "map.loadError"
+  | "map.score"
+  | "map.sample"
+  | "map.location"
+  | "map.region"
   | "reports.evaluationsTitle"
   | "reports.evaluationName"
   | "reports.evaluator"
@@ -260,7 +270,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "common.noName": "Sem nome",
     "common.creationDate": "Data de Criação",
     "nav.menu": "Menu",
-    "nav.map": "Mapa",
+    "nav.map": "Mapa das Avaliações",
     "nav.locationReport": "Relatório de Localizações",
     "nav.peopleReport": "Relatório de Pessoas",
     "nav.userReport": "Relatório de Usuários",
@@ -378,9 +388,19 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "profile.permissionError": "Você não tem permissão para realizar esta ação.",
     "profile.loading": "Carregando informações do usuário...",
     "profile.notFound": "Usuário não encontrado ou não logado.",
+    "map.title": "Mapa das Avaliações",
     "map.loading": "Carregando mapa...",
     "map.unnamedEvaluation": "Avaliação sem nome",
     "map.viewDetails": "Ver Detalhes",
+    "map.regionFilter": "Filtrar por região",
+    "map.allRegions": "Todas as regiões",
+    "map.visibleEvaluations": "avaliações ativas no mapa",
+    "map.noEvaluations": "Nenhuma avaliação ativa encontrada para o filtro selecionado.",
+    "map.loadError": "Não foi possível carregar as informações do mapa.",
+    "map.score": "Score VESS",
+    "map.sample": "Amostra",
+    "map.location": "Localização",
+    "map.region": "Região",
     "reports.evaluationsTitle": "Relatório de Avaliações",
     "reports.evaluationName": "Nome da Avaliação",
     "reports.evaluator": "Avaliador",
@@ -482,7 +502,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "common.noName": "No name",
     "common.creationDate": "Creation Date",
     "nav.menu": "Menu",
-    "nav.map": "Map",
+    "nav.map": "Evaluation Map",
     "nav.locationReport": "Location Report",
     "nav.peopleReport": "People Report",
     "nav.userReport": "User Report",
@@ -600,9 +620,19 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "profile.permissionError": "You do not have permission to perform this action.",
     "profile.loading": "Loading user information...",
     "profile.notFound": "User not found or not logged in.",
+    "map.title": "Evaluation Map",
     "map.loading": "Loading map...",
     "map.unnamedEvaluation": "Unnamed evaluation",
     "map.viewDetails": "View Details",
+    "map.regionFilter": "Filter by region",
+    "map.allRegions": "All regions",
+    "map.visibleEvaluations": "active evaluations on the map",
+    "map.noEvaluations": "No active evaluations found for the selected filter.",
+    "map.loadError": "Unable to load the map information.",
+    "map.score": "VESS score",
+    "map.sample": "Sample",
+    "map.location": "Location",
+    "map.region": "Region",
     "reports.evaluationsTitle": "Evaluation Report",
     "reports.evaluationName": "Evaluation Name",
     "reports.evaluator": "Evaluator",
@@ -704,7 +734,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "common.noName": "Sin nombre",
     "common.creationDate": "Fecha de Creación",
     "nav.menu": "Menú",
-    "nav.map": "Mapa",
+    "nav.map": "Mapa de Evaluaciones",
     "nav.locationReport": "Informe de Ubicaciones",
     "nav.peopleReport": "Informe de Personas",
     "nav.userReport": "Informe de Usuarios",
@@ -822,9 +852,19 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "profile.permissionError": "No tienes permiso para realizar esta acción.",
     "profile.loading": "Cargando información del usuario...",
     "profile.notFound": "Usuario no encontrado o no conectado.",
+    "map.title": "Mapa de Evaluaciones",
     "map.loading": "Cargando mapa...",
     "map.unnamedEvaluation": "Evaluación sin nombre",
     "map.viewDetails": "Ver Detalles",
+    "map.regionFilter": "Filtrar por región",
+    "map.allRegions": "Todas las regiones",
+    "map.visibleEvaluations": "evaluaciones activas en el mapa",
+    "map.noEvaluations": "No se encontraron evaluaciones activas para el filtro seleccionado.",
+    "map.loadError": "No fue posible cargar la información del mapa.",
+    "map.score": "Puntaje VESS",
+    "map.sample": "Muestra",
+    "map.location": "Ubicación",
+    "map.region": "Región",
     "reports.evaluationsTitle": "Informe de Evaluaciones",
     "reports.evaluationName": "Nombre de la Evaluación",
     "reports.evaluator": "Evaluador",
