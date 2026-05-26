@@ -235,10 +235,10 @@ type TranslationKey =
   | "modal.loadError";
 
 type LanguageContextValue = {
-  language: Language;
-  locale: string;
-  setLanguage: (language: Language) => void;
-  t: (key: TranslationKey, params?: Record<string, string | number>) => string;
+    language: Language;
+    locale: string;
+    setLanguage: (language: Language) => void;
+    t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 };
 
 const STORAGE_KEY = "vess-language";
@@ -945,48 +945,48 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
 const isLanguage = (value: string | null): value is Language =>
-  value === "pt-BR" || value === "en" || value === "es";
+    value === "pt-BR" || value === "en" || value === "es";
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => {
-    if (typeof window === "undefined") return "pt-BR";
-    const storedLanguage = window.localStorage.getItem(STORAGE_KEY);
-    return isLanguage(storedLanguage) ? storedLanguage : "pt-BR";
-  });
+    const [language, setLanguageState] = useState<Language>(() => {
+        if (typeof window === "undefined") return "pt-BR";
+        const storedLanguage = window.localStorage.getItem(STORAGE_KEY);
+        return isLanguage(storedLanguage) ? storedLanguage : "pt-BR";
+    });
 
-  useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, language);
-    document.documentElement.lang = language;
-  }, [language]);
+    useEffect(() => {
+        window.localStorage.setItem(STORAGE_KEY, language);
+        document.documentElement.lang = language;
+    }, [language]);
 
-  const value = useMemo<LanguageContextValue>(() => {
-    const t = (key: TranslationKey, params?: Record<string, string | number>) => {
-      const template = translations[language][key] ?? translations["pt-BR"][key] ?? key;
-      if (!params) return template;
+    const value = useMemo<LanguageContextValue>(() => {
+        const t = (key: TranslationKey, params?: Record<string, string | number>) => {
+            const template = translations[language][key] ?? translations["pt-BR"][key] ?? key;
+            if (!params) return template;
 
-      return Object.entries(params).reduce(
-        (text, [paramKey, paramValue]) =>
-          text.replace(new RegExp(`\\{${paramKey}\\}`, "g"), String(paramValue)),
-        template
-      );
-    };
+            return Object.entries(params).reduce(
+                (text, [paramKey, paramValue]) =>
+                    text.replace(new RegExp(`\\{${paramKey}\\}`, "g"), String(paramValue)),
+                template
+            );
+        };
 
-    return {
-      language,
-      locale: language,
-      setLanguage: setLanguageState,
-      t,
-    };
-  }, [language]);
+        return {
+            language,
+            locale: language,
+            setLanguage: setLanguageState,
+            t,
+        };
+    }, [language]);
 
-  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
+    return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 
 export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error("useLanguage must be used within LanguageProvider");
-  }
+    const context = useContext(LanguageContext);
+    if (!context) {
+        throw new Error("useLanguage must be used within LanguageProvider");
+    }
 
-  return context;
+    return context;
 }
