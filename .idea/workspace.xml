@@ -4,15 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e5d35abb-7d3c-41fd-85aa-020586ce0e36" name="Changes" comment="">
+    <list default="true" id="e5d35abb-7d3c-41fd-85aa-020586ce0e36" name="Changes" comment="complete internalization">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/controller/AvaliacaoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/controller/AvaliacaoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/dto/AvaliacaoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/dto/AvaliacaoDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/handler/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/handler/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/model/Avaliacao.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/model/Avaliacao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/repository/AvaliacaoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/repository/AvaliacaoRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/security/WebSecurity.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/security/WebSecurity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/service/AvaliacaoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/service/AvaliacaoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/controller/AmostraController.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/controller/AmostraController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/repository/AmostraRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/repository/AmostraRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/service/AmostraService.java" beforeDir="false" afterPath="$PROJECT_DIR$/vess-api-main/src/main/java/br/edu/utfpr/pb/pw45s/projetofinal/service/AmostraService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/context/LanguageContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/context/LanguageContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vess-web-app-main/src/pages/map/MapPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/vess-web-app-main/src/pages/map/MapPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,37 +44,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/Jeff",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.45057473",
-    "settings.editor.selected.configurable": "project.propVCSSupport.Mappings",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
-  },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
-    ]
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;VESS-31&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.45057473&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.Mappings&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="VESS_2026" />
@@ -112,6 +104,7 @@
       <workItem from="1774480931454" duration="967000" />
       <workItem from="1776290190908" duration="1121000" />
       <workItem from="1778018054873" duration="2602000" />
+      <workItem from="1779832969980" duration="479000" />
     </task>
     <servers />
   </component>
