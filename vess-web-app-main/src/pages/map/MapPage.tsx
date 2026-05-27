@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import React, { useEffect, useMemo, useState } from "react";
-import { ChevronRight, Filter, Loader, MapPin } from "lucide-react";
+import { ChevronRight, Filter, Loader, MapPin, BarChart3, Layers } from "lucide-react";
 import AvaliacaoModal from "../../components/common/AvaliaçãoModal";
 
 import api from "../../services/api";
@@ -95,7 +95,6 @@ export default function MapPage() {
         setRegioes(regioesResponse.data);
       } catch (error) {
         setLoadError(true);
-
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           logoutUser();
         }
@@ -116,11 +115,11 @@ export default function MapPage() {
 
   const markers = useMemo(() => {
     return filteredAmostras
-      .map((amostra) => {
-        const position = parseLocation(amostra.localizacao);
-        return position ? { amostra, position } : null;
-      })
-      .filter((item): item is { amostra: AmostraResumo; position: [number, number] } => Boolean(item));
+        .map((amostra) => {
+          const position = parseLocation(amostra.localizacao);
+          return position ? { amostra, position } : null;
+        })
+        .filter((item): item is { amostra: AmostraResumo; position: [number, number] } => Boolean(item));
   }, [filteredAmostras]);
 
   const center: [number, number] = markers[0]?.position ?? [-26.229, -52.671];
@@ -128,113 +127,137 @@ export default function MapPage() {
 
   if (isLoading) {
     return (
-      <div className="w-full h-[calc(100vh-6rem)] flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
-        <Loader className="animate-spin text-blue-600 mb-4" size={48} />
-        <p className="text-gray-700 dark:text-gray-200 font-semibold text-lg">{t("map.loading")}</p>
-      </div>
+        <div className="w-full h-[calc(100vh-6rem)] flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
+          <Loader className="animate-spin text-blue-600 mb-4" size={48} />
+          <p className="text-gray-700 dark:text-gray-200 font-semibold text-lg">{t("map.loading")}</p>
+        </div>
     );
   }
 
   return (
-    <div className="w-full h-[calc(100vh-6rem)] flex flex-col gap-4">
-      <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">{t("map.title")}</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {markers.length} {t("map.visibleEvaluations")}
-          </p>
-        </div>
+      <div className="w-full h-[calc(100vh-6rem)] flex flex-col gap-4">
+        <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">{t("map.title")}</h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {markers.length} {t("map.visibleEvaluations")}
+            </p>
+          </div>
 
-        <label className="flex w-full flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300 sm:max-w-xs">
+          <label className="flex w-full flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300 sm:max-w-xs">
           <span className="flex items-center gap-2">
             <Filter size={16} />
             {t("map.regionFilter")}
           </span>
-          <select
-            value={selectedRegiaoId}
-            onChange={(event) => setSelectedRegiaoId(event.target.value)}
-            className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
-          >
-            <option value="">{t("map.allRegions")}</option>
-            {regioes.map((regiao) => (
-              <option key={regiao.id} value={regiao.id}>
-                {regiao.nome}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      {loadError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300">
-          {t("map.loadError")}
-        </div>
-      )}
-
-      <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800">
-        <MapContainer center={center} zoom={zoom} scrollWheelZoom={true} className="h-full w-full z-[1]">
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-          />
-
-          {markers.map(({ amostra, position }) => (
-            <Marker
-              key={amostra.id}
-              position={position}
-              icon={createScoreIcon(amostra.avaliacao?.escoreMedioGeral)}
+            <select
+                value={selectedRegiaoId}
+                onChange={(event) => setSelectedRegiaoId(event.target.value)}
+                className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
             >
-              <Popup offset={[0, -10]} maxWidth={300}>
-                <div className="text-gray-800">
-                  <p className="font-bold text-gray-900 text-lg mb-3 leading-tight text-center">
-                    {amostra.avaliacao?.nomeAvaliacao ?? t("map.unnamedEvaluation")}
-                  </p>
+              <option value="">{t("map.allRegions")}</option>
+              {regioes.map((regiao) => (
+                  <option key={regiao.id} value={regiao.id}>
+                    {regiao.nome}
+                  </option>
+              ))}
+            </select>
+          </label>
+        </div>
 
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-start gap-2">
-                      <MapPin size={16} className="mt-0.5 text-blue-600 flex-shrink-0" />
-                      <div>
-                        <div className="font-medium">{t("map.sample")}: {amostra.nomeAmostra}</div>
-                        <div>{t("map.location")}: {amostra.localizacao}</div>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="font-medium">{t("map.score")}:</span>{" "}
-                      {amostra.avaliacao?.escoreMedioGeral?.toFixed(1) ?? t("common.notInformed")}
-                    </div>
-                    <div>
-                      <span className="font-medium">{t("map.region")}:</span>{" "}
-                      {amostra.avaliacao?.regiao?.nome ?? t("common.notInformed")}
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setSelectedAvaliacaoId(amostra.avaliacao.id)}
-                    className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow-md active:scale-95"
-                  >
-                    {t("map.viewDetails")}
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-
-        {!loadError && markers.length === 0 && (
-          <div className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center">
-            <div className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
-              {t("map.noEvaluations")}
+        {loadError && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300">
+              {t("map.loadError")}
             </div>
-          </div>
         )}
-      </div>
 
-      {selectedAvaliacaoId && (
-        <AvaliacaoModal avaliacaoId={selectedAvaliacaoId} onClose={() => setSelectedAvaliacaoId(null)} />
-      )}
+        <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800">
+          <MapContainer center={center} zoom={zoom} scrollWheelZoom={true} className="h-full w-full z-[1]">
+            <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+            />
 
-      <style>{`
+            {markers.map(({ amostra, position }) => {
+              const escoreGeral = amostra.avaliacao?.escoreMedioGeral;
+              const cardColor = getScoreColor(escoreGeral);
+
+              return (
+                  <Marker
+                      key={amostra.id}
+                      position={position}
+                      icon={createScoreIcon(escoreGeral)}
+                  >
+                    <Popup offset={[0, -10]} maxWidth={320}>
+                      <div className="text-gray-800 p-1">
+                        {/* Cabeçalho do Popup com identificação clara da Avaliação */}
+                        <p className="font-bold text-gray-900 text-base mb-3 leading-tight border-b border-gray-100 pb-2 flex items-center gap-1.5">
+                          <Layers size={16} className="text-gray-500" />
+                          {amostra.avaliacao?.nomeAvaliacao ?? t("map.unnamedEvaluation")}
+                        </p>
+
+                        <div className="space-y-2.5 text-sm">
+                          <div className="flex items-start gap-2">
+                            <MapPin size={16} className="mt-0.5 text-blue-600 flex-shrink-0" />
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {t("map.sample")}: <span className="font-normal text-gray-700">{amostra.nomeAmostra}</span>
+                              </div>
+                              <div className="text-xs text-gray-500 mt-0.5">{amostra.localizacao}</div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <BarChart3 size={16} className="text-blue-600 flex-shrink-0" />
+                            <div className="font-medium text-gray-900">
+                              {t("map.score")}:{" "}
+                              <span
+                                  className="inline-flex items-center justify-center px-2 py-0.5 ml-1 text-xs font-bold rounded-md text-white shadow-xs"
+                                  style={{ backgroundColor: cardColor }}
+                              >
+                            {escoreGeral != null ? escoreGeral.toFixed(1) : t("common.notInformed")}
+                          </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 pl-0.5">
+                            <div className="w-3 h-3 rounded-full border border-gray-300" style={{ backgroundColor: amostra.avaliacao?.regiao?.corHex ?? '#CBD5E1' }} />
+                            <div className="font-medium text-gray-900">
+                              {t("map.region")}:{" "}
+                              <span className="font-normal text-gray-700">
+                            {amostra.avaliacao?.regiao?.nome ?? t("common.notInformed")}
+                          </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                            onClick={() => setSelectedAvaliacaoId(amostra.avaliacao.id)}
+                            className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all duration-200 shadow-xs hover:shadow-md active:scale-98 text-xs cursor-pointer"
+                        >
+                          {t("map.viewDetails")}
+                          <ChevronRight size={14} />
+                        </button>
+                      </div>
+                    </Popup>
+                  </Marker>
+              );
+            })}
+          </MapContainer>
+
+          {!loadError && markers.length === 0 && (
+              <div className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center">
+                <div className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
+                  {t("map.noEvaluations")}
+                </div>
+              </div>
+          )}
+        </div>
+
+        {selectedAvaliacaoId && (
+            <AvaliacaoModal avaliacaoId={selectedAvaliacaoId} onClose={() => setSelectedAvaliacaoId(null)} />
+        )}
+
+        <style>{`
         .leaflet-container {
           z-index: 1 !important;
         }
@@ -253,7 +276,7 @@ export default function MapPage() {
           border: 2px solid #ffffff;
           border-radius: 999px 999px 999px 4px;
           box-shadow: 0 8px 16px rgba(15, 23, 42, 0.28);
-          color: #111827;
+          color: #ffffff;
           display: flex;
           font-size: 12px;
           font-weight: 700;
@@ -265,7 +288,11 @@ export default function MapPage() {
         .vess-score-pin span {
           transform: rotate(45deg);
         }
+        .leaflet-popup-content-wrapper {
+          border-radius: 12px;
+          padding: 6px;
+        }
       `}</style>
-    </div>
+      </div>
   );
 }
