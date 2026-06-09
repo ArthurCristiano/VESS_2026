@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { X, Star, MapPin, User, FileText, Loader, Layers, Hash } from "lucide-react";
+import { X, Star, MapPin, User, FileText, Loader, Layers, Hash, ImageOff } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
@@ -16,6 +16,7 @@ type AmostraDetalhada = {
   notaAmostra?: string;
   numeroCamadas?: number;
   ordemAmostra?: number;
+  imagemUrl?: string | null;
 };
 
 type AvaliacaoCompleta = {
@@ -41,6 +42,42 @@ type ModalProps = {
 };
 
 type Feedback = { type: "success" | "error"; message: string } | null;
+
+type SampleImageProps = {
+  src?: string | null;
+  alt: string;
+  unavailableLabel: string;
+};
+
+function SampleImage({ src, alt, unavailableLabel }: SampleImageProps) {
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const normalizedSrc = src?.trim() || null;
+
+  if (!normalizedSrc || failedSrc === normalizedSrc) {
+    return (
+      <div
+        className="aspect-video w-full bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500"
+        role="img"
+        aria-label={`${alt}: ${unavailableLabel}`}
+      >
+        <ImageOff size={28} />
+        <span className="text-xs font-medium">{unavailableLabel}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
+      <img
+        src={normalizedSrc}
+        alt={alt}
+        loading="lazy"
+        className="h-full w-full object-cover"
+        onError={() => setFailedSrc(normalizedSrc)}
+      />
+    </div>
+  );
+}
 
 export default function AvaliacaoModal({ avaliacaoId, mode, onClose, onSuccess }: ModalProps) {
   const [avaliacao, setAvaliacao] = useState<AvaliacaoCompleta | null>(null);
@@ -291,55 +328,63 @@ export default function AvaliacaoModal({ avaliacaoId, mode, onClose, onSuccess }
                   {avaliacao.amostras.map((amostra) => (
                     <div
                       key={amostra.id}
-                      className="bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-md hover:border-emerald-400/60 transition-all duration-200"
+                      className="bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden hover:shadow-md hover:border-emerald-400/60 transition-all duration-200"
                     >
-                      <div className="flex items-start justify-between mb-3">
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-balance">{amostra.nomeAmostra}</h4>
-                        {amostra.escoreQeVess !== undefined && (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold">
-                            <Star size={12} />
-                            {amostra.escoreQeVess}
-                          </span>
-                        )}
-                      </div>
+                      <SampleImage
+                        src={amostra.imagemUrl}
+                        alt={amostra.nomeAmostra}
+                        unavailableLabel={t("modal.imageUnavailable")}
+                      />
 
-                      <div className="space-y-2">
-                        <div className="flex items-start gap-2">
-                          <MapPin size={14} className="text-gray-400 dark:text-gray-500 mt-0.5 flex-shrink-0" />
-                          <p className="text-sm text-gray-600 dark:text-gray-300">{amostra.localizacao}</p>
+                      <div className="p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-balance">{amostra.nomeAmostra}</h4>
+                          {amostra.escoreQeVess !== undefined && (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold">
+                              <Star size={12} />
+                              {amostra.escoreQeVess}
+                            </span>
+                          )}
                         </div>
 
-                        {amostra.numeroCamadas !== undefined && (
-                          <div className="flex items-center gap-2">
-                            <Layers size={14} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
-                              {amostra.numeroCamadas} {amostra.numeroCamadas === 1 ? t("modal.layerSingular") : t("modal.layerPlural")}
-                            </p>
+                        <div className="space-y-2">
+                          <div className="flex items-start gap-2">
+                            <MapPin size={14} className="text-gray-400 dark:text-gray-500 mt-0.5 flex-shrink-0" />
+                            <p className="text-sm text-gray-600 dark:text-gray-300">{amostra.localizacao}</p>
                           </div>
-                        )}
 
-                        {amostra.ordemAmostra !== undefined && (
-                          <div className="flex items-center gap-2">
-                            <Hash size={14} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
-                              {t("modal.order", { order: amostra.ordemAmostra })}
-                            </p>
-                          </div>
-                        )}
+                          {amostra.numeroCamadas !== undefined && (
+                            <div className="flex items-center gap-2">
+                              <Layers size={14} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                              <p className="text-sm text-gray-600 dark:text-gray-300">
+                                {amostra.numeroCamadas} {amostra.numeroCamadas === 1 ? t("modal.layerSingular") : t("modal.layerPlural")}
+                              </p>
+                            </div>
+                          )}
 
-                        {amostra.notaAmostra?.trim() && (
-                          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
-                            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Nota</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">{amostra.notaAmostra}</p>
-                          </div>
-                        )}
+                          {amostra.ordemAmostra !== undefined && (
+                            <div className="flex items-center gap-2">
+                              <Hash size={14} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                              <p className="text-sm text-gray-600 dark:text-gray-300">
+                                {t("modal.order", { order: amostra.ordemAmostra })}
+                              </p>
+                            </div>
+                          )}
 
-                        {amostra.descricaoManejo?.trim() && (
-                          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
-                            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{t("modal.management")}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">{amostra.descricaoManejo}</p>
-                          </div>
-                        )}
+                          {amostra.notaAmostra?.trim() && (
+                            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+                              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Nota</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">{amostra.notaAmostra}</p>
+                            </div>
+                          )}
+
+                          {amostra.descricaoManejo?.trim() && (
+                            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+                              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{t("modal.management")}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">{amostra.descricaoManejo}</p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}

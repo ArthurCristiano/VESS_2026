@@ -10,6 +10,7 @@ public class AmostraDTO implements Serializable {
     private String nomeAmostra;
     private Integer numeroCamadas;
     private String arquivoUpload;
+    private String imagemUrl;
     private Float escoreQeVess;
     private String descricaoManejo;
     private String notaAmostra;

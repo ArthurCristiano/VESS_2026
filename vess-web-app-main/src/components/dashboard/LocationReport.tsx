@@ -58,11 +58,10 @@ function getStatusBadgeClass(status: string) {
 
 function getScoreBadgeClass(score: number | null) {
     if (score === null) return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
-    if (score <= 1.5) return "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300";
-    if (score <= 2.5) return "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300";
-    if (score <= 3.5) return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300";
-    if (score <= 4.5) return "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300";
-    return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300";
+    if (score >= 1 && score <= 2.9) return "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300";
+    if (score >= 3 && score <= 4.4) return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300";
+    if (score >= 4.5 && score <= 5) return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300";
+    return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
 }
 
 function formatScore(score: number | null) {

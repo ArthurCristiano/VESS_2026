@@ -9,6 +9,7 @@ public class AmostraMapaDTO {
     private Long id;
     private String nomeAmostra;
     private String localizacao;
+    private String imagemUrl;
     private AvaliacaoMapaResumoDTO avaliacao;
 
     public static AmostraMapaDTO from(Amostra amostra) {
@@ -16,6 +17,7 @@ public class AmostraMapaDTO {
         dto.setId(amostra.getId());
         dto.setNomeAmostra(amostra.getNomeAmostra());
         dto.setLocalizacao(amostra.getLocalizacao());
+        dto.setImagemUrl(amostra.getImagemUrl());
         dto.setAvaliacao(AvaliacaoMapaResumoDTO.from(amostra.getAvaliacao()));
         return dto;
     }
