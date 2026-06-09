@@ -232,6 +232,7 @@ type TranslationKey =
   | "modal.layerPlural"
   | "modal.order"
   | "modal.management"
+  | "modal.imageUnavailable"
   | "modal.loadError";
 
 type LanguageContextValue = {
@@ -474,6 +475,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "modal.layerPlural": "camadas",
     "modal.order": "Ordem: {order}",
     "modal.management": "Manejo",
+    "modal.imageUnavailable": "Imagem não disponível",
     "modal.loadError": "Não foi possível carregar os dados.",
   },
   en: {
@@ -706,6 +708,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "modal.layerPlural": "layers",
     "modal.order": "Order: {order}",
     "modal.management": "Management",
+    "modal.imageUnavailable": "Image unavailable",
     "modal.loadError": "Unable to load the data.",
   },
   es: {
@@ -938,6 +941,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "modal.layerPlural": "capas",
     "modal.order": "Orden: {order}",
     "modal.management": "Manejo",
+    "modal.imageUnavailable": "Imagen no disponible",
     "modal.loadError": "No fue posible cargar los datos.",
   },
 };

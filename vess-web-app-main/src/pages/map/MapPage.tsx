@@ -36,11 +36,10 @@ type AmostraResumo = {
 
 const getScoreColor = (score?: number | null) => {
   if (score == null || Number.isNaN(score)) return "#6B7280";
-  if (score <= 1.5) return "#16A34A";
-  if (score <= 2.5) return "#84CC16";
-  if (score <= 3.5) return "#FACC15";
-  if (score <= 4.5) return "#F97316";
-  return "#DC2626";
+  if (score >= 1 && score <= 2.9) return "#16A34A";
+  if (score >= 3 && score <= 4.4) return "#FACC15";
+  if (score >= 4.5 && score <= 5) return "#DC2626";
+  return "#6B7280";
 };
 
 const createScoreIcon = (score?: number | null) => {
@@ -254,7 +253,11 @@ export default function MapPage() {
         </div>
 
         {selectedAvaliacaoId && (
-            <AvaliacaoModal avaliacaoId={selectedAvaliacaoId} onClose={() => setSelectedAvaliacaoId(null)} />
+            <AvaliacaoModal
+                avaliacaoId={selectedAvaliacaoId}
+                mode="view"
+                onClose={() => setSelectedAvaliacaoId(null)}
+            />
         )}
 
         <style>{`

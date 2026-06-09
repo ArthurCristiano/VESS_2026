@@ -35,6 +35,9 @@ public class Amostra implements Identifiable<Long> {
     @Column(name = "arquivo_upload")
     private String arquivoUpload;
 
+    @Column(name = "imagem_url", length = 2048)
+    private String imagemUrl;
+
     @Column(name = "escore_qe_vess")
     private Float escoreQeVess;
 
