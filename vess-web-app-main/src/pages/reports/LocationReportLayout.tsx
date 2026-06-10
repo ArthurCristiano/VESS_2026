@@ -5,8 +5,8 @@ export default function Home() {
   return (
     <>
       <PageMeta
-        title="React.js Ecommerce Dashboard | TailAdmin - React.js Admin Dashboard Template"
-        description="This is React.js Ecommerce Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title="Lista de avaliações | VESS"
+        description="Consulte, filtre e navegue pelas avaliações cadastradas no sistema VESS."
       />
       <div className="bg-white  dark:bg-gray-900">
         <LocationReport />

@@ -24,6 +24,7 @@ type TranslationKey =
   | "common.closeModal"
   | "common.yes"
   | "common.no"
+  | "common.all"
   | "common.notInformed"
   | "common.noName"
   | "common.creationDate"
@@ -161,9 +162,23 @@ type TranslationKey =
   | "map.region"
   | "reports.evaluationsTitle"
   | "reports.evaluationName"
+  | "reports.summary"
   | "reports.evaluator"
+  | "reports.region"
   | "reports.totalSamples"
   | "reports.averageScore"
+  | "reports.filtersTitle"
+  | "reports.filtersDescription"
+  | "reports.filterDate"
+  | "reports.filterEvaluator"
+  | "reports.filterRegion"
+  | "reports.clearFilters"
+  | "reports.filteredCount"
+  | "reports.pageInfo"
+  | "reports.previousPage"
+  | "reports.nextPage"
+  | "reports.noFilteredEvaluations"
+  | "reports.evaluationsError"
   | "reports.loadingEvaluations"
   | "reports.noEvaluations"
   | "reports.viewEvaluation"
@@ -267,6 +282,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "common.closeModal": "Fechar modal",
     "common.yes": "Sim",
     "common.no": "Não",
+    "common.all": "Todos",
     "common.notInformed": "Não informado",
     "common.noName": "Sem nome",
     "common.creationDate": "Data de Criação",
@@ -404,9 +420,23 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "map.region": "Região",
     "reports.evaluationsTitle": "Relatório de Avaliações",
     "reports.evaluationName": "Nome da Avaliação",
+    "reports.summary": "Resumo",
     "reports.evaluator": "Avaliador",
+    "reports.region": "Região",
     "reports.totalSamples": "Total de Amostras",
     "reports.averageScore": "Escore Médio Geral",
+    "reports.filtersTitle": "Filtros",
+    "reports.filtersDescription": "Combine os filtros para localizar avaliações com mais facilidade.",
+    "reports.filterDate": "Data de criação",
+    "reports.filterEvaluator": "Avaliador",
+    "reports.filterRegion": "Região",
+    "reports.clearFilters": "Limpar filtros",
+    "reports.filteredCount": "{count} avaliações encontradas",
+    "reports.pageInfo": "Página {current} de {total}",
+    "reports.previousPage": "Anterior",
+    "reports.nextPage": "Próxima",
+    "reports.noFilteredEvaluations": "Nenhuma avaliação encontrada para os filtros aplicados.",
+    "reports.evaluationsError": "Falha ao carregar as avaliações do servidor.",
     "reports.loadingEvaluations": "Carregando avaliações...",
     "reports.noEvaluations": "Nenhuma avaliação encontrada.",
     "reports.viewEvaluation": "Visualizar avaliação",
@@ -500,6 +530,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "common.closeModal": "Close modal",
     "common.yes": "Yes",
     "common.no": "No",
+    "common.all": "All",
     "common.notInformed": "Not informed",
     "common.noName": "No name",
     "common.creationDate": "Creation Date",
@@ -637,9 +668,23 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "map.region": "Region",
     "reports.evaluationsTitle": "Evaluation Report",
     "reports.evaluationName": "Evaluation Name",
+    "reports.summary": "Summary",
     "reports.evaluator": "Evaluator",
+    "reports.region": "Region",
     "reports.totalSamples": "Total Samples",
     "reports.averageScore": "Overall Average Score",
+    "reports.filtersTitle": "Filters",
+    "reports.filtersDescription": "Combine filters to find evaluations more easily.",
+    "reports.filterDate": "Creation date",
+    "reports.filterEvaluator": "Evaluator",
+    "reports.filterRegion": "Region",
+    "reports.clearFilters": "Clear filters",
+    "reports.filteredCount": "{count} evaluations found",
+    "reports.pageInfo": "Page {current} of {total}",
+    "reports.previousPage": "Previous",
+    "reports.nextPage": "Next",
+    "reports.noFilteredEvaluations": "No evaluations found for the selected filters.",
+    "reports.evaluationsError": "Failed to load evaluations from the server.",
     "reports.loadingEvaluations": "Loading evaluations...",
     "reports.noEvaluations": "No evaluations found.",
     "reports.viewEvaluation": "View evaluation",
@@ -733,6 +778,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "common.closeModal": "Cerrar modal",
     "common.yes": "Sí",
     "common.no": "No",
+    "common.all": "Todos",
     "common.notInformed": "No informado",
     "common.noName": "Sin nombre",
     "common.creationDate": "Fecha de Creación",
@@ -870,9 +916,23 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "map.region": "Región",
     "reports.evaluationsTitle": "Informe de Evaluaciones",
     "reports.evaluationName": "Nombre de la Evaluación",
+    "reports.summary": "Resumen",
     "reports.evaluator": "Evaluador",
+    "reports.region": "Región",
     "reports.totalSamples": "Total de Muestras",
     "reports.averageScore": "Puntaje Medio General",
+    "reports.filtersTitle": "Filtros",
+    "reports.filtersDescription": "Combina los filtros para encontrar evaluaciones con más facilidad.",
+    "reports.filterDate": "Fecha de creación",
+    "reports.filterEvaluator": "Evaluador",
+    "reports.filterRegion": "Región",
+    "reports.clearFilters": "Limpiar filtros",
+    "reports.filteredCount": "{count} evaluaciones encontradas",
+    "reports.pageInfo": "Página {current} de {total}",
+    "reports.previousPage": "Anterior",
+    "reports.nextPage": "Siguiente",
+    "reports.noFilteredEvaluations": "No se encontraron evaluaciones con los filtros seleccionados.",
+    "reports.evaluationsError": "No fue posible cargar las evaluaciones del servidor.",
     "reports.loadingEvaluations": "Cargando evaluaciones...",
     "reports.noEvaluations": "No se encontraron evaluaciones.",
     "reports.viewEvaluation": "Ver evaluación",
