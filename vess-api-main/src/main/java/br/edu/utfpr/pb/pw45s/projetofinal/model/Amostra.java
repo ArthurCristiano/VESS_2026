@@ -10,7 +10,11 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity @Table(name = "amostra")
+@Entity
+@Table(name = "amostra", indexes = {
+        @Index(name = "idx_amostra_avaliacao_id", columnList = "avaliacao_id"),
+        @Index(name = "idx_amostra_localizacao_split", columnList = "localizacao")
+})
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @ToString
