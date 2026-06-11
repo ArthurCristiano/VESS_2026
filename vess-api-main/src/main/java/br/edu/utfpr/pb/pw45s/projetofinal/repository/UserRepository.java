@@ -1,6 +1,7 @@
 package br.edu.utfpr.pb.pw45s.projetofinal.repository;
 
 import br.edu.utfpr.pb.pw45s.projetofinal.model.User;
+import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserProfile;
 import br.edu.utfpr.pb.pw45s.projetofinal.model.enums.UserStatus;
 import br.edu.utfpr.pb.pw45s.projetofinal.shared.CrudRepository;
 
@@ -19,4 +20,5 @@ public interface UserRepository extends CrudRepository<Long, User> {
     boolean existsByEmailAndIdNot(String email, Long id);
     List<User> findByStatus(UserStatus status);
     long countByStatus(UserStatus status);
+    List<User> findByProfileAndStatus(UserProfile profile, UserStatus status);
 }

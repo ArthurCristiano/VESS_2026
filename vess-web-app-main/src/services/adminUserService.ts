@@ -47,3 +47,8 @@ export async function inactivateUser(id: number): Promise<AdminUserDto> {
     const { data } = await api.patch<AdminUserDto>(`/users/${id}/inactivate`);
     return normalizeUser(data);
 }
+
+export async function activateUser(id: number): Promise<AdminUserDto> {
+    const { data } = await api.patch<AdminUserDto>(`/users/${id}/activate`);
+    return normalizeUser(data);
+}

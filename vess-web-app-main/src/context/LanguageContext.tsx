@@ -128,6 +128,8 @@ type TranslationKey =
   | "auth.confirm.genericError"
   | "auth.confirm.confirmedAccount"
   | "auth.confirm.goToLogin"
+  | "auth.confirm.pendingApproval"
+  | "auth.confirm.loginHint"
   | "page.notFound"
   | "page.profile.title"
   | "page.profile.metaTitle"
@@ -221,6 +223,13 @@ type TranslationKey =
   | "adminUsers.updateError"
   | "adminUsers.inactivateSuccess"
   | "adminUsers.inactivateError"
+  | "adminUsers.activate"
+  | "adminUsers.activateUser"
+  | "adminUsers.confirmActivate"
+  | "adminUsers.alreadyActive"
+  | "adminUsers.cannotActivatePendingEmail"
+  | "adminUsers.activateSuccess"
+  | "adminUsers.activateError"
   | "role.admin"
   | "role.researcher"
   | "role.visitor"
@@ -350,7 +359,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "auth.register.requiredError": "Todos os campos marcados com * são obrigatórios.",
     "auth.register.validationError": "Erro de validação",
     "auth.register.genericError": "Ocorreu um erro inesperado durante o cadastro. Tente novamente.",
-    "auth.register.emailConfirmation": "Verifique a caixa de entrada do seu e-mail e acesse o link para confirmar o seu cadastro.",
+    "auth.register.emailConfirmation": "Cadastro realizado! Verifique seu e-mail para confirmar o endereço. Após a confirmação, um administrador analisará seu cadastro.",
     "auth.register.loading": "Cadastrando...",
     "auth.register.submit": "Cadastrar",
     "auth.register.hasAccount": "Já tem uma conta?",
@@ -384,8 +393,10 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "auth.confirm.missingToken": "Token de confirmação não informado.",
     "auth.confirm.completed": "Confirmação concluída.",
     "auth.confirm.genericError": "Não foi possível confirmar o e-mail. O token pode estar inválido ou expirado.",
-    "auth.confirm.confirmedAccount": "Conta confirmada:",
-    "auth.confirm.goToLogin": "Ir para login",
+    "auth.confirm.confirmedAccount": "E-mail confirmado:",
+    "auth.confirm.goToLogin": "Voltar para login",
+    "auth.confirm.pendingApproval": "Seu e-mail foi confirmado, mas seu cadastro ainda precisa ser aprovado por um Administrador antes do acesso ao sistema.",
+    "auth.confirm.loginHint": "Você poderá acessar o sistema após a aprovação do seu cadastro.",
     "page.notFound": "Página não encontrada (404)",
     "page.profile.title": "Seu Perfil",
     "page.profile.metaTitle": "Perfil do Usuário | Sua Aplicação",
@@ -479,6 +490,13 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "adminUsers.updateError": "Falha ao atualizar o usuário.",
     "adminUsers.inactivateSuccess": "Usuário inativado com sucesso.",
     "adminUsers.inactivateError": "Falha ao inativar o usuário.",
+    "adminUsers.activate": "Ativar",
+    "adminUsers.activateUser": "Ativar usuário",
+    "adminUsers.confirmActivate": "Ativar o usuário {name}? Ele poderá acessar o sistema.",
+    "adminUsers.alreadyActive": "Este usuário já está ativo.",
+    "adminUsers.cannotActivatePendingEmail": "Este usuário ainda não confirmou o e-mail.",
+    "adminUsers.activateSuccess": "Usuário ativado com sucesso.",
+    "adminUsers.activateError": "Falha ao ativar o usuário.",
     "role.admin": "Administrador",
     "role.researcher": "Pesquisador",
     "role.visitor": "Visitante",
@@ -598,7 +616,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "auth.register.requiredError": "All fields marked with * are required.",
     "auth.register.validationError": "Validation error",
     "auth.register.genericError": "An unexpected error occurred during registration. Try again.",
-    "auth.register.emailConfirmation": "Check your email inbox and open the link to confirm your registration.",
+    "auth.register.emailConfirmation": "Registration complete! Check your email to confirm your address. After confirmation, an administrator will review your registration.",
     "auth.register.loading": "Registering...",
     "auth.register.submit": "Register",
     "auth.register.hasAccount": "Already have an account?",
@@ -632,8 +650,10 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "auth.confirm.missingToken": "Confirmation token was not provided.",
     "auth.confirm.completed": "Confirmation completed.",
     "auth.confirm.genericError": "Unable to confirm the email. The token may be invalid or expired.",
-    "auth.confirm.confirmedAccount": "Confirmed account:",
-    "auth.confirm.goToLogin": "Go to login",
+    "auth.confirm.confirmedAccount": "Confirmed email:",
+    "auth.confirm.goToLogin": "Back to login",
+    "auth.confirm.pendingApproval": "Your email was confirmed, but your registration still needs to be approved by an Administrator before you can access the system.",
+    "auth.confirm.loginHint": "You will be able to access the system after your registration is approved.",
     "page.notFound": "Page not found (404)",
     "page.profile.title": "Your Profile",
     "page.profile.metaTitle": "User Profile | Your Application",
@@ -727,6 +747,13 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "adminUsers.updateError": "Failed to update the user.",
     "adminUsers.inactivateSuccess": "User inactivated successfully.",
     "adminUsers.inactivateError": "Failed to inactivate the user.",
+    "adminUsers.activate": "Activate",
+    "adminUsers.activateUser": "Activate user",
+    "adminUsers.confirmActivate": "Activate user {name}? They will be able to access the system.",
+    "adminUsers.alreadyActive": "This user is already active.",
+    "adminUsers.cannotActivatePendingEmail": "This user has not confirmed their email yet.",
+    "adminUsers.activateSuccess": "User activated successfully.",
+    "adminUsers.activateError": "Failed to activate the user.",
     "role.admin": "Administrator",
     "role.researcher": "Researcher",
     "role.visitor": "Visitor",
@@ -846,7 +873,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "auth.register.requiredError": "Todos los campos marcados con * son obligatorios.",
     "auth.register.validationError": "Error de validación",
     "auth.register.genericError": "Ocurrió un error inesperado durante el registro. Inténtalo de nuevo.",
-    "auth.register.emailConfirmation": "Revisa tu bandeja de entrada y abre el enlace para confirmar tu registro.",
+    "auth.register.emailConfirmation": "¡Registro realizado! Revisa tu correo para confirmar la dirección. Después de la confirmación, un administrador analizará tu registro.",
     "auth.register.loading": "Registrando...",
     "auth.register.submit": "Registrar",
     "auth.register.hasAccount": "¿Ya tienes una cuenta?",
@@ -880,8 +907,10 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "auth.confirm.missingToken": "Token de confirmación no informado.",
     "auth.confirm.completed": "Confirmación completada.",
     "auth.confirm.genericError": "No fue posible confirmar el correo. El token puede ser inválido o estar vencido.",
-    "auth.confirm.confirmedAccount": "Cuenta confirmada:",
-    "auth.confirm.goToLogin": "Ir al login",
+    "auth.confirm.confirmedAccount": "Correo confirmado:",
+    "auth.confirm.goToLogin": "Volver al login",
+    "auth.confirm.pendingApproval": "Tu correo fue confirmado, pero tu registro aún necesita ser aprobado por un Administrador antes de acceder al sistema.",
+    "auth.confirm.loginHint": "Podrás acceder al sistema después de la aprobación de tu registro.",
     "page.notFound": "Página no encontrada (404)",
     "page.profile.title": "Tu Perfil",
     "page.profile.metaTitle": "Perfil de Usuario | Tu Aplicación",
@@ -975,6 +1004,13 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "adminUsers.updateError": "Error al actualizar el usuario.",
     "adminUsers.inactivateSuccess": "Usuario inactivado con éxito.",
     "adminUsers.inactivateError": "Error al inativar el usuario.",
+    "adminUsers.activate": "Activar",
+    "adminUsers.activateUser": "Activar usuario",
+    "adminUsers.confirmActivate": "¿Activar al usuario {name}? Podrá acceder al sistema.",
+    "adminUsers.alreadyActive": "Este usuario ya está activo.",
+    "adminUsers.cannotActivatePendingEmail": "Este usuario aún no ha confirmado su correo.",
+    "adminUsers.activateSuccess": "Usuario activado con éxito.",
+    "adminUsers.activateError": "Error al activar el usuario.",
     "role.admin": "Administrador",
     "role.researcher": "Investigador",
     "role.visitor": "Visitante",

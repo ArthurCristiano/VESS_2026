@@ -95,6 +95,12 @@ public class UserController extends CrudController<Long, User, UserDTO, UserRepo
         return toDto(saved);
     }
 
+    @PatchMapping("/{id}/activate")
+    public UserDTO activate(@PathVariable Long id) {
+        User saved = service.activate(id);
+        return toDto(saved);
+    }
+
     @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {

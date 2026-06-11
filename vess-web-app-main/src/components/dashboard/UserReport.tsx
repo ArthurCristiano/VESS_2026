@@ -2,13 +2,14 @@
 
 import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { Pencil, RefreshCw, ShieldCheck, UserX } from "lucide-react";
+import { Pencil, RefreshCw, ShieldCheck, UserCheck, UserX } from "lucide-react";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../ui/table";
 import Modal from "../common/Modal";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { getBackendErrorMessage } from "../../services/api";
 import {
+    activateUser,
     getUser,
     inactivateUser,
     listUsers,
@@ -223,6 +224,52 @@ export default function UserReport() {
             setFeedback({
                 type: "error",
                 message: resolveErrorMessage(err, t("adminUsers.updateError")),
+            });
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleActivate = async (targetUser: AdminUserDto) => {
+        if (targetUser.status === "ATIVO") {
+            setFeedback({ type: "error", message: t("adminUsers.alreadyActive") });
+            return;
+        }
+
+        if (targetUser.status === "PENDENTE_EMAIL") {
+            setFeedback({ type: "error", message: t("adminUsers.cannotActivatePendingEmail") });
+            return;
+        }
+
+        const confirmed = window.confirm(
+            t("adminUsers.confirmActivate", { name: targetUser.username })
+        );
+
+        if (!confirmed) return;
+
+        try {
+            setActionLoading(true);
+            setFeedback(null);
+
+            const updatedUser = await activateUser(targetUser.id);
+
+            syncCurrentUserContext(updatedUser);
+
+            setUsers((prevUsers) =>
+                prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+            );
+
+            if (selectedUser?.id === updatedUser.id) {
+                setSelectedUser(updatedUser);
+                setFormData(getUserFormData(updatedUser));
+            }
+
+            setFeedback({ type: "success", message: t("adminUsers.activateSuccess") });
+            await loadUsers(false);
+        } catch (err) {
+            setFeedback({
+                type: "error",
+                message: resolveErrorMessage(err, t("adminUsers.activateError")),
             });
         } finally {
             setActionLoading(false);
@@ -452,6 +499,17 @@ export default function UserReport() {
 
                                                     <button
                                                         type="button"
+                                                        onClick={() => void handleActivate(user)}
+                                                        disabled={actionLoading || !isInactive}
+                                                        className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-green-600 transition-colors hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-40 dark:text-green-400 dark:hover:bg-green-900/20"
+                                                        title={t("adminUsers.activateUser")}
+                                                    >
+                                                        <UserCheck size={15} />
+                                                        {t("adminUsers.activate")}
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
                                                         onClick={() => void handleInactivate(user)}
                                                         disabled={actionLoading || isInactive || isCurrentUser}
                                                         className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:text-red-400 dark:hover:bg-red-900/20"
@@ -599,19 +657,31 @@ export default function UserReport() {
                         </div>
 
                         <div className="flex flex-col-reverse gap-3 border-t border-gray-200 pt-4 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
-                            <button
-                                type="button"
-                                onClick={() => void handleInactivate(selectedUser)}
-                                disabled={
-                                    actionLoading ||
-                                    selectedUser.status === "INATIVO" ||
-                                    currentUser?.id === selectedUser.id
-                                }
-                                className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-900/20"
-                            >
-                                <UserX size={16} />
-                                {t("adminUsers.inactivateUser")}
-                            </button>
+                            <div className="flex flex-col gap-3 sm:flex-row">
+                                <button
+                                    type="button"
+                                    onClick={() => void handleActivate(selectedUser)}
+                                    disabled={actionLoading || selectedUser.status !== "INATIVO"}
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-green-200 px-4 py-2.5 text-sm font-medium text-green-600 transition-colors hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-green-900/60 dark:text-green-400 dark:hover:bg-green-900/20"
+                                >
+                                    <UserCheck size={16} />
+                                    {t("adminUsers.activateUser")}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => void handleInactivate(selectedUser)}
+                                    disabled={
+                                        actionLoading ||
+                                        selectedUser.status === "INATIVO" ||
+                                        currentUser?.id === selectedUser.id
+                                    }
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-900/20"
+                                >
+                                    <UserX size={16} />
+                                    {t("adminUsers.inactivateUser")}
+                                </button>
+                            </div>
 
                             <div className="flex flex-col gap-3 sm:flex-row">
                                 <button

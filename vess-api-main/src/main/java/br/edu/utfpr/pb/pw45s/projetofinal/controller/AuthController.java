@@ -19,6 +19,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/auth")
 public class AuthController {
 
+    private static final String EMAIL_CONFIRMED_PENDING_APPROVAL_MESSAGE =
+            "E-mail confirmado com sucesso. Seu cadastro aguarda aprovação de um administrador.";
+
     private final AuthService authService;
     private final EmailConfirmationService emailConfirmationService;
 
@@ -45,7 +48,7 @@ public class AuthController {
     public ResponseEntity<String> confirmEmail(@RequestParam String token) {
         try {
             var user = emailConfirmationService.confirmEmail(token);
-            return ResponseEntity.ok("E-mail confirmado com sucesso para " + user.getEmail() + "!");
+            return ResponseEntity.ok(EMAIL_CONFIRMED_PENDING_APPROVAL_MESSAGE);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -57,7 +60,7 @@ public class AuthController {
             var user = emailConfirmationService.confirmEmail(token);
             return ResponseEntity.ok(new EmailConfirmationResultDTO(
                     true,
-                    "E-mail confirmado com sucesso.",
+                    EMAIL_CONFIRMED_PENDING_APPROVAL_MESSAGE,
                     user.getEmail()
             ));
         } catch (RuntimeException e) {
