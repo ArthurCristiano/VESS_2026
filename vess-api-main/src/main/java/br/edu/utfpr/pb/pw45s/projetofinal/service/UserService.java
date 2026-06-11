@@ -145,6 +145,16 @@ public class UserService extends CrudService<Long, User, UserRepository> impleme
     public User activate(Long userId) {
         User user = repository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + userId));
+
+        if (UserStatus.ATIVO.equals(user.getStatus())) {
+            throw new IllegalStateException("Usuário já está ativo.");
+        }
+
+        if (UserStatus.PENDENTE_EMAIL.equals(user.getStatus())) {
+            throw new IllegalStateException(
+                    "Usuário ainda não confirmou o e-mail. A ativação só é permitida após a confirmação.");
+        }
+
         user.setStatus(UserStatus.ATIVO);
         return repository.save(user);
     }
