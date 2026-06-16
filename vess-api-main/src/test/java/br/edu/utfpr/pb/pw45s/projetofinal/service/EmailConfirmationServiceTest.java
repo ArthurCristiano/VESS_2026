@@ -39,6 +39,9 @@ class EmailConfirmationServiceTest {
     @Mock
     private EmailService emailService;
 
+    @Mock
+    private AdminNotificationService adminNotificationService;
+
     @InjectMocks
     private EmailConfirmationService emailConfirmationService;
 
@@ -65,10 +68,11 @@ class EmailConfirmationServiceTest {
         ArgumentCaptor<String> htmlCaptor = ArgumentCaptor.forClass(String.class);
         verify(emailService).sendHtmlEmail(eq("maria@example.com"), eq("Confirme seu e-mail"), htmlCaptor.capture());
         assertTrue(htmlCaptor.getValue().contains("/auth/confirm-email?token=" + savedToken.getToken()));
+        assertTrue(htmlCaptor.getValue().contains("será analisado por um administrador"));
     }
 
     @Test
-    void confirmEmailActivatesUserAndMarksTokenAsConfirmed() {
+    void confirmEmailSetsInactiveAndMarksTokenAsConfirmed() {
         User user = new User();
         user.setEmail("maria@example.com");
         user.setStatus(UserStatus.PENDENTE_EMAIL);
@@ -85,10 +89,75 @@ class EmailConfirmationServiceTest {
 
         User confirmedUser = emailConfirmationService.confirmEmail("token-123");
 
-        assertEquals(UserStatus.ATIVO, confirmedUser.getStatus());
+        assertEquals(UserStatus.INATIVO, confirmedUser.getStatus());
         assertNotNull(token.getConfirmedAt());
         verify(userRepository).save(user);
         verify(tokenRepository).save(token);
+        verify(adminNotificationService).notifyNewRegistrationPendingApproval(user);
+    }
+
+    @Test
+    void confirmEmailDoesNotNotifyAdminOnReclick() {
+        User user = new User();
+        user.setEmail("maria@example.com");
+        user.setStatus(UserStatus.INATIVO);
+
+        EmailConfirmationToken token = new EmailConfirmationToken();
+        token.setToken("token-123");
+        token.setUser(user);
+        token.setCreatedAt(Instant.now().minus(Duration.ofMinutes(10)));
+        token.setExpiresAt(Instant.now().plus(Duration.ofHours(1)));
+        token.setConfirmedAt(Instant.now().minus(Duration.ofMinutes(5)));
+
+        when(tokenRepository.findByToken("token-123")).thenReturn(Optional.of(token));
+
+        emailConfirmationService.confirmEmail("token-123");
+
+        verify(adminNotificationService, never()).notifyNewRegistrationPendingApproval(any());
+    }
+
+    @Test
+    void confirmEmailDoesNotChangeStatusWhenAlreadyInactive() {
+        User user = new User();
+        user.setEmail("maria@example.com");
+        user.setStatus(UserStatus.INATIVO);
+
+        EmailConfirmationToken token = new EmailConfirmationToken();
+        token.setToken("token-123");
+        token.setUser(user);
+        token.setCreatedAt(Instant.now().minus(Duration.ofMinutes(10)));
+        token.setExpiresAt(Instant.now().plus(Duration.ofHours(1)));
+        token.setConfirmedAt(Instant.now().minus(Duration.ofMinutes(5)));
+
+        when(tokenRepository.findByToken("token-123")).thenReturn(Optional.of(token));
+
+        User confirmedUser = emailConfirmationService.confirmEmail("token-123");
+
+        assertEquals(UserStatus.INATIVO, confirmedUser.getStatus());
+        verify(userRepository, never()).save(any());
+        verify(tokenRepository, never()).save(any());
+    }
+
+    @Test
+    void confirmEmailDoesNotDowngradeActiveUser() {
+        User user = new User();
+        user.setEmail("maria@example.com");
+        user.setStatus(UserStatus.ATIVO);
+
+        EmailConfirmationToken token = new EmailConfirmationToken();
+        token.setToken("token-123");
+        token.setUser(user);
+        token.setCreatedAt(Instant.now().minus(Duration.ofMinutes(10)));
+        token.setExpiresAt(Instant.now().plus(Duration.ofHours(1)));
+        token.setConfirmedAt(Instant.now().minus(Duration.ofMinutes(5)));
+
+        when(tokenRepository.findByToken("token-123")).thenReturn(Optional.of(token));
+
+        User confirmedUser = emailConfirmationService.confirmEmail("token-123");
+
+        assertEquals(UserStatus.ATIVO, confirmedUser.getStatus());
+        verify(userRepository, never()).save(any());
+        verify(tokenRepository, never()).save(any());
     }
 
     @Test
@@ -111,6 +180,7 @@ class EmailConfirmationServiceTest {
         assertEquals("O link de confirmação expirou. Solicite um novo cadastro.", exception.getMessage());
         verify(userRepository, never()).save(any());
         verify(tokenRepository, never()).save(any());
+        verify(adminNotificationService, never()).notifyNewRegistrationPendingApproval(any());
     }
 
     @Test
@@ -124,4 +194,3 @@ class EmailConfirmationServiceTest {
         verifyNoInteractions(userRepository);
     }
 }
-

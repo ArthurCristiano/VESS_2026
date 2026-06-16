@@ -29,7 +29,7 @@ export default function ConfirmEmailForm() {
       try {
         const response = await verifyConfirmEmailToken(token);
         setSuccess(Boolean(response.success));
-        setMessage(response.message || t("auth.confirm.completed"));
+        setMessage(response.message || t("auth.confirm.pendingApproval"));
         setEmail(response.email ?? null);
       } catch (error: unknown) {
         setSuccess(false);
@@ -59,15 +59,24 @@ export default function ConfirmEmailForm() {
             </p>
           </div>
 
-          {!loading && (
+          {!loading && success && (
             <>
-              <p className={`text-sm ${success ? "text-green-600" : "text-error-500"}`}>{message}</p>
-              {success && email && (
+              <p className="text-sm text-green-600 dark:text-green-400">{t("auth.confirm.success")}</p>
+              <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">{message}</p>
+              {email && (
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                  {t("auth.confirm.confirmedAccount")} <span className="font-medium">{email}</span>
+                  {t("auth.confirm.confirmedAccount")}{" "}
+                  <span className="font-medium">{email}</span>
                 </p>
               )}
+              <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+                {t("auth.confirm.loginHint")}
+              </p>
             </>
+          )}
+
+          {!loading && !success && (
+            <p className="text-sm text-error-500">{message}</p>
           )}
 
           <div className="mt-6">

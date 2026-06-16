@@ -25,16 +25,19 @@ public class EmailConfirmationService {
     private final EmailConfirmationTokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final AdminNotificationService adminNotificationService;
 
     @Value("${app.frontend-url:}")
     private String frontendUrl;
 
     public EmailConfirmationService(EmailConfirmationTokenRepository tokenRepository,
                                     UserRepository userRepository,
-                                    EmailService emailService) {
+                                    EmailService emailService,
+                                    AdminNotificationService adminNotificationService) {
         this.tokenRepository = tokenRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.adminNotificationService = adminNotificationService;
     }
 
     @Transactional(noRollbackFor = EmailSendException.class)
@@ -69,12 +72,8 @@ public class EmailConfirmationService {
                 .orElseThrow(() -> new IllegalArgumentException("Token de confirmação inválido."));
 
         if (token.getConfirmedAt() != null) {
-            User user = token.getUser();
-            if (!UserStatus.ATIVO.equals(user.getStatus())) {
-                user.setStatus(UserStatus.ATIVO);
-                userRepository.save(user);
-            }
-            return user;
+            applyStatusAfterEmailConfirmation(token.getUser());
+            return token.getUser();
         }
 
         Instant now = Instant.now();
@@ -83,17 +82,21 @@ public class EmailConfirmationService {
         }
 
         User user = token.getUser();
-        if (!UserStatus.ATIVO.equals(user.getStatus())) {
-            user.setStatus(UserStatus.ATIVO);
-            user = userRepository.save(user);
-        }
+        applyStatusAfterEmailConfirmation(user);
 
-        if (token.getConfirmedAt() == null) {
-            token.setConfirmedAt(now);
-            tokenRepository.save(token);
-        }
+        token.setConfirmedAt(now);
+        tokenRepository.save(token);
+
+        adminNotificationService.notifyNewRegistrationPendingApproval(user);
 
         return user;
+    }
+
+    private void applyStatusAfterEmailConfirmation(User user) {
+        if (UserStatus.PENDENTE_EMAIL.equals(user.getStatus())) {
+            user.setStatus(UserStatus.INATIVO);
+            userRepository.save(user);
+        }
     }
 
     private void requireUser(User user) {
@@ -118,7 +121,7 @@ public class EmailConfirmationService {
                   <h2>Confirmação de e-mail</h2>
                   <p>Olá, <strong>%s</strong>.</p>
                   <p>Seu cadastro no VESS foi realizado com sucesso.</p>
-                  <p>Para ativar sua conta, clique no botão abaixo para confirmar seu e-mail.</p>
+                  <p>Para confirmar seu e-mail, clique no botão abaixo. Após a confirmação, seu cadastro será analisado por um administrador antes do acesso ao sistema.</p>
                   <p style="margin: 32px 0;">
                     <a href="%s"
                        style="background-color:#1D9E75; color:#fff; padding:12px 24px;
