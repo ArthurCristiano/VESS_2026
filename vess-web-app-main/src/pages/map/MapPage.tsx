@@ -1,6 +1,8 @@
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
+import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
+import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
 import L from "leaflet";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -102,6 +104,27 @@ const userLocationIcon = L.divIcon({
     iconSize: [28, 28],
     iconAnchor: [14, 14],
 });
+
+const createClusterCustomIcon = (cluster: any) => {
+    const count = cluster.getChildCount();
+
+    let size = 42;
+    let className = "custom-marker-cluster small";
+
+    if (count >= 10 && count < 50) {
+        size = 48;
+        className = "custom-marker-cluster medium";
+    } else if (count >= 50) {
+        size = 56;
+        className = "custom-marker-cluster large";
+    }
+
+    return L.divIcon({
+        html: `<div><span>${count}</span></div>`,
+        className,
+        iconSize: L.point(size, size, true),
+    });
+};
 
 const parseLocation = (localizacao: string): [number, number] | null => {
     const parts = localizacao.split(",");
@@ -435,6 +458,7 @@ export default function MapPage() {
                         disableClusteringAtZoom={16}
                         spiderfyOnMaxZoom
                         showCoverageOnHover={false}
+                        iconCreateFunction={createClusterCustomIcon}
                     >
                         {markers.map(({ amostra, position }) => {
                             const escoreGeral = amostra.avaliacao?.escoreMedioGeral;
@@ -614,18 +638,45 @@ export default function MapPage() {
           width: 14px;
         }
 
-        .marker-cluster-small,
-        .marker-cluster-medium,
-        .marker-cluster-large {
-          background-color: rgba(37, 99, 235, 0.18);
+        .custom-marker-cluster {
+          background: transparent !important;
+          border: none !important;
         }
 
-        .marker-cluster-small div,
-        .marker-cluster-medium div,
-        .marker-cluster-large div {
-          background-color: #2563eb;
+        .custom-marker-cluster div {
+          align-items: center;
+          border: 4px solid rgba(255, 255, 255, 0.95);
+          border-radius: 999px;
+          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
           color: #ffffff;
+          display: flex;
+          font-size: 14px;
           font-weight: 700;
+          height: 100%;
+          justify-content: center;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          width: 100%;
+        }
+
+        .custom-marker-cluster div span {
+          line-height: 1;
+        }
+
+        .custom-marker-cluster.small div {
+          background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .custom-marker-cluster.medium div {
+          background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+
+        .custom-marker-cluster.large div {
+          background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .custom-marker-cluster:hover div {
+          box-shadow: 0 10px 24px rgba(15, 23, 42, 0.28);
+          transform: scale(1.06);
         }
 
         .leaflet-popup-content-wrapper {
