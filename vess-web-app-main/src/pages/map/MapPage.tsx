@@ -7,8 +7,10 @@ import L from "leaflet";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     BarChart3,
+    ChevronLeft,
     ChevronRight,
     Filter,
+    Info,
     Layers,
     Loader,
     LocateFixed,
@@ -45,18 +47,84 @@ type AmostraResumo = {
     };
 };
 
+type AmostrasMapaPageResponse = {
+    content: AmostraResumo[];
+    number?: number;
+    size?: number;
+    totalElements?: number;
+    totalPages?: number;
+    first?: boolean;
+    last?: boolean;
+};
+
+type AmostrasMapaApiResponse = AmostraResumo[] | AmostrasMapaPageResponse;
+
+type MapPaginationMeta = {
+    page: number;
+    limit: number;
+    totalElements: number | null;
+    totalPages: number | null;
+    isFirst: boolean;
+    isLast: boolean;
+};
+
 type UserLocation = {
     latitude: number;
     longitude: number;
 };
 
 const TAMANHO_LOTE_INICIAL = 100;
-const LIMITE_CARREGAR_TODAS = 10000;
-const OPCOES_LIMITE = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+const OPCOES_LIMITE = [25, 50, 100, 250, 500, 1000];
 
 const RAIO_PROXIMIDADE_GRAUS = 0.25;
 
 const scoreIconCache = new Map<string, L.DivIcon>();
+
+const createDefaultPaginationMeta = (limit = TAMANHO_LOTE_INICIAL): MapPaginationMeta => ({
+    page: 0,
+    limit,
+    totalElements: null,
+    totalPages: null,
+    isFirst: true,
+    isLast: true,
+});
+
+const normalizeAmostrasMapaResponse = (
+    data: AmostrasMapaApiResponse,
+    fallbackPage: number,
+    fallbackLimit: number
+): { content: AmostraResumo[]; meta: MapPaginationMeta } => {
+    if (Array.isArray(data)) {
+        return {
+            content: data,
+            meta: {
+                page: fallbackPage,
+                limit: fallbackLimit,
+                totalElements: null,
+                totalPages: null,
+                isFirst: fallbackPage === 0,
+                isLast: true,
+            },
+        };
+    }
+
+    const page = data.number ?? fallbackPage;
+    const limit = data.size ?? fallbackLimit;
+    const totalElements = data.totalElements ?? null;
+    const totalPages = data.totalPages ?? null;
+
+    return {
+        content: data.content,
+        meta: {
+            page,
+            limit,
+            totalElements,
+            totalPages,
+            isFirst: data.first ?? page === 0,
+            isLast: data.last ?? (totalPages != null ? page >= totalPages - 1 : true),
+        },
+    };
+};
 
 const getScoreColor = (score?: number | null) => {
     if (score == null || Number.isNaN(score)) return "#6B7280";
@@ -186,18 +254,17 @@ export default function MapPage() {
         "loading" | "allowed" | "denied" | "unavailable"
     >("loading");
 
-    const [limiteSelecionado, setLimiteSelecionado] = useState<number | "TODOS">(
-        TAMANHO_LOTE_INICIAL
-    );
-
-    const [limiteAplicado, setLimiteAplicado] = useState<number | "TODOS">(
-        TAMANHO_LOTE_INICIAL
+    const [limiteAplicado, setLimiteAplicado] = useState(TAMANHO_LOTE_INICIAL);
+    const [paginaAtual, setPaginaAtual] = useState(0);
+    const [paginacaoMapa, setPaginacaoMapa] = useState<MapPaginationMeta>(
+        createDefaultPaginationMeta()
     );
 
     const { logoutUser } = useAuth();
     const { t } = useLanguage();
 
-    const carregandoTodos = limiteAplicado === "TODOS";
+    const limiteNumericoAplicado = limiteAplicado;
+    const mapLoteTooltip = t("map.batchTooltip");
 
     useEffect(() => {
         const fetchRegioes = async () => {
@@ -248,22 +315,30 @@ export default function MapPage() {
 
         try {
             const params: Record<string, number | string> = {
-                limit: carregandoTodos ? LIMITE_CARREGAR_TODAS : limiteAplicado,
+                limit: limiteNumericoAplicado,
+                page: paginaAtual,
             };
 
             if (selectedRegiaoId) {
                 params.regiaoId = selectedRegiaoId;
             }
 
-            if (!carregandoTodos && userLocation) {
+            if (userLocation) {
                 Object.assign(params, calcularBoundingBox(userLocation));
             }
 
-            const amostrasResponse = await api.get<AmostraResumo[]>("/amostra/resumo-mapa", {
+            const amostrasResponse = await api.get<AmostrasMapaApiResponse>("/amostra/resumo-mapa", {
                 params,
             });
 
-            setAmostrasResumo(amostrasResponse.data);
+            const { content, meta } = normalizeAmostrasMapaResponse(
+                amostrasResponse.data,
+                paginaAtual,
+                limiteNumericoAplicado
+            );
+
+            setAmostrasResumo(content);
+            setPaginacaoMapa(meta);
         } catch (error) {
             setLoadError(true);
 
@@ -273,7 +348,13 @@ export default function MapPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [carregandoTodos, limiteAplicado, logoutUser, selectedRegiaoId, userLocation]);
+    }, [
+        limiteNumericoAplicado,
+        logoutUser,
+        paginaAtual,
+        selectedRegiaoId,
+        userLocation,
+    ]);
 
     useEffect(() => {
         if (locationStatus === "loading") {
@@ -295,46 +376,70 @@ export default function MapPage() {
             );
     }, [amostrasResumo]);
 
-    const center: [number, number] =
-        userLocation && !carregandoTodos
-            ? [userLocation.latitude, userLocation.longitude]
-            : markers[0]?.position ?? [-26.229, -52.671];
+    const center: [number, number] = userLocation
+        ? [userLocation.latitude, userLocation.longitude]
+        : markers[0]?.position ?? [-26.229, -52.671];
 
-    const zoom = userLocation && !carregandoTodos ? 12 : markers.length > 0 ? 12 : 13;
+    const zoom = userLocation ? 12 : markers.length > 0 ? 12 : 13;
 
     const locationMessage = useMemo(() => {
-        if (locationStatus === "allowed" && !carregandoTodos) {
-            return `Carregando até ${limiteAplicado} avaliações próximas à sua localização.`;
+        if (locationStatus === "allowed") {
+            return t("map.locationMessage.allowed", { limit: limiteAplicado });
         }
 
         if (locationStatus === "denied") {
-            return "Localização não permitida. Exibindo avaliações pela estratégia padrão.";
+            return t("map.locationMessage.denied", { limit: limiteAplicado });
         }
 
         if (locationStatus === "unavailable") {
-            return "Localização indisponível. Exibindo avaliações pela estratégia padrão.";
+            return t("map.locationMessage.unavailable", { limit: limiteAplicado });
         }
 
-        if (carregandoTodos) {
-            return "Exibindo todas as avaliações carregadas para o mapa.";
+        return t("map.locationMessage.loading");
+    }, [limiteAplicado, locationStatus, t]);
+
+    const paginationLabel = useMemo(() => {
+        if (paginacaoMapa.totalElements == null) {
+            return null;
         }
 
-        return "Buscando avaliações para o mapa.";
-    }, [carregandoTodos, limiteAplicado, locationStatus]);
+        if (paginacaoMapa.totalElements === 0) {
+            return t("map.emptyFilter");
+        }
+
+        const start = paginacaoMapa.page * paginacaoMapa.limit + 1;
+        const end = Math.min(start + markers.length - 1, paginacaoMapa.totalElements);
+
+        return t("map.paginationRange", {
+            start,
+            end,
+            total: paginacaoMapa.totalElements,
+        });
+    }, [markers.length, paginacaoMapa, t]);
+
+    const totalPaginasMapa = paginacaoMapa.totalPages ?? 0;
+    const showPaginationControls = totalPaginasMapa > 0;
 
     const handleChangeRegiao = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedRegiaoId(event.target.value);
-        setLimiteSelecionado(TAMANHO_LOTE_INICIAL);
-        setLimiteAplicado(TAMANHO_LOTE_INICIAL);
+        setPaginaAtual(0);
+        setPaginacaoMapa(createDefaultPaginationMeta(limiteAplicado));
     };
 
     const handleChangeLimite = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = event.target.value;
-        setLimiteSelecionado(value === "TODOS" ? "TODOS" : Number(value));
+        const novoLimite = Number(event.target.value);
+
+        setPaginaAtual(0);
+        setLimiteAplicado(novoLimite);
+        setPaginacaoMapa(createDefaultPaginationMeta(novoLimite));
     };
 
-    const handleCarregar = () => {
-        setLimiteAplicado(limiteSelecionado);
+    const handlePaginaAnterior = () => {
+        setPaginaAtual((pagina) => Math.max(0, pagina - 1));
+    };
+
+    const handleProximaPagina = () => {
+        setPaginaAtual((pagina) => pagina + 1);
     };
 
     if (isLoading && amostrasResumo.length === 0) {
@@ -347,7 +452,7 @@ export default function MapPage() {
                 </p>
 
                 <p className="mt-2 max-w-md text-center text-sm text-gray-500 dark:text-gray-400">
-                    Solicitando localização e carregando um conjunto otimizado de avaliações.
+                    {t("map.loadingDescription")}
                 </p>
             </div>
         );
@@ -368,6 +473,12 @@ export default function MapPage() {
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                         {locationMessage}
                     </p>
+
+                    {paginationLabel && (
+                        <p className="mt-1 text-xs font-medium text-gray-600 dark:text-gray-300">
+                            {paginationLabel}
+                        </p>
+                    )}
                 </div>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
@@ -392,33 +503,76 @@ export default function MapPage() {
                         </select>
                     </label>
 
-                    <label className="flex w-full flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-40">
-                        <span>Quantidade</span>
+                    <label className="flex w-full flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-44">
+                        <span className="flex items-center gap-2">
+                            {t("map.evaluationsPerBatch")}
+
+                            <span
+                                className="group relative inline-flex"
+                                tabIndex={0}
+                                aria-label={mapLoteTooltip}
+                            >
+                                <Info
+                                    size={15}
+                                    className="cursor-help text-gray-400 transition hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                                />
+
+                                <span className="pointer-events-none absolute left-1/2 top-full z-[60] mt-2 w-72 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-xs font-normal leading-5 text-white opacity-0 shadow-lg transition group-hover:opacity-100 group-focus:opacity-100 dark:bg-gray-700">
+                                    {mapLoteTooltip}
+                                </span>
+                            </span>
+                        </span>
 
                         <select
-                            value={limiteSelecionado}
+                            value={limiteAplicado}
                             onChange={handleChangeLimite}
                             disabled={isLoading}
                             className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
                         >
                             {OPCOES_LIMITE.map((limite) => (
                                 <option key={limite} value={limite}>
-                                    Top {limite}
+                                    {limite}
                                 </option>
                             ))}
-
-                            <option value="TODOS">Todos</option>
                         </select>
                     </label>
 
-                    <button
-                        type="button"
-                        onClick={handleCarregar}
-                        disabled={isLoading}
-                        className="h-11 rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        Carregar
-                    </button>
+                    {showPaginationControls && (
+                        <div
+                            className={`flex h-11 items-center overflow-hidden rounded-lg border border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900 ${
+                                totalPaginasMapa === 1 ? "opacity-70" : ""
+                            }`}
+                        >
+                            <button
+                                type="button"
+                                onClick={handlePaginaAnterior}
+                                disabled={isLoading || paginacaoMapa.isFirst}
+                                className="flex h-11 w-11 items-center justify-center text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-45 dark:text-gray-200 dark:hover:bg-gray-800"
+                                aria-label={t("map.previousBatch")}
+                                title={t("map.previousBatch")}
+                            >
+                                <ChevronLeft size={18} />
+                            </button>
+
+                            <div className="flex h-11 min-w-28 items-center justify-center border-x border-gray-300 px-3 text-sm font-semibold text-gray-700 dark:border-gray-700 dark:text-gray-200">
+                                {t("map.batchIndicator", {
+                                    page: paginacaoMapa.page + 1,
+                                    totalPages: totalPaginasMapa,
+                                })}
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={handleProximaPagina}
+                                disabled={isLoading || paginacaoMapa.isLast}
+                                className="flex h-11 w-11 items-center justify-center text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-45 dark:text-gray-200 dark:hover:bg-gray-800"
+                                aria-label={t("map.nextBatch")}
+                                title={t("map.nextBatch")}
+                            >
+                                <ChevronRight size={18} />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -443,12 +597,12 @@ export default function MapPage() {
                         attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
                     />
 
-                    {userLocation && !carregandoTodos && (
+                    {userLocation && (
                         <Marker
                             position={[userLocation.latitude, userLocation.longitude]}
                             icon={userLocationIcon}
                         >
-                            <Popup>Sua localização aproximada</Popup>
+                            <Popup>{t("map.userLocationPopup")}</Popup>
                         </Marker>
                     )}
 
@@ -548,7 +702,7 @@ export default function MapPage() {
                     <div className="absolute inset-0 z-[3] flex items-center justify-center bg-white/80 dark:bg-gray-950/80">
                         <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">
                             <Loader className="animate-spin text-blue-600" size={20} />
-                            Atualizando pontos do mapa...
+                            {t("map.updatingPoints")}
                         </div>
                     </div>
                 )}
@@ -561,10 +715,10 @@ export default function MapPage() {
                     </div>
                 )}
 
-                {userLocation && !carregandoTodos && (
+                {userLocation && (
                     <div className="absolute left-4 top-4 z-[2] flex items-center gap-2 rounded-lg border border-blue-100 bg-white/95 px-3 py-2 text-xs font-semibold text-blue-700 shadow-sm dark:border-blue-900/40 dark:bg-gray-900/95 dark:text-blue-300">
                         <LocateFixed size={15} />
-                        Localização usada para priorizar avaliações próximas
+                        {t("map.userLocationPriority")}
                     </div>
                 )}
             </div>

@@ -162,6 +162,21 @@ type TranslationKey =
   | "map.sample"
   | "map.location"
   | "map.region"
+  | "map.loadingDescription"
+  | "map.locationMessage.allowed"
+  | "map.locationMessage.denied"
+  | "map.locationMessage.unavailable"
+  | "map.locationMessage.loading"
+  | "map.emptyFilter"
+  | "map.paginationRange"
+  | "map.evaluationsPerBatch"
+  | "map.batchTooltip"
+  | "map.previousBatch"
+  | "map.nextBatch"
+  | "map.batchIndicator"
+  | "map.userLocationPopup"
+  | "map.updatingPoints"
+  | "map.userLocationPriority"
   | "reports.evaluationsTitle"
   | "reports.evaluationName"
   | "reports.summary"
@@ -429,6 +444,21 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "map.sample": "Amostra",
     "map.location": "Localização",
     "map.region": "Região",
+    "map.loadingDescription": "Solicitando localiza\u00e7\u00e3o e carregando um conjunto otimizado de avalia\u00e7\u00f5es.",
+    "map.locationMessage.allowed": "Exibindo at\u00e9 {limit} avalia\u00e7\u00f5es por lote, priorizando pontos pr\u00f3ximos da sua localiza\u00e7\u00e3o.",
+    "map.locationMessage.denied": "Exibindo at\u00e9 {limit} avalia\u00e7\u00f5es por lote. Localiza\u00e7\u00e3o n\u00e3o permitida.",
+    "map.locationMessage.unavailable": "Exibindo at\u00e9 {limit} avalia\u00e7\u00f5es por lote. Localiza\u00e7\u00e3o indispon\u00edvel.",
+    "map.locationMessage.loading": "Buscando avalia\u00e7\u00f5es para o mapa.",
+    "map.emptyFilter": "Nenhuma avalia\u00e7\u00e3o encontrada para este filtro.",
+    "map.paginationRange": "Lote {start}-{end} de {total} avalia\u00e7\u00f5es",
+    "map.evaluationsPerBatch": "Avalia\u00e7\u00f5es por lote",
+    "map.batchTooltip": "Este campo controla quantas avalia\u00e7\u00f5es s\u00e3o exibidas por vez no mapa. Use as setas ao lado para navegar entre os lotes.",
+    "map.previousBatch": "Lote anterior",
+    "map.nextBatch": "Pr\u00f3ximo lote",
+    "map.batchIndicator": "Lote {page} de {totalPages}",
+    "map.userLocationPopup": "Sua localiza\u00e7\u00e3o aproximada",
+    "map.updatingPoints": "Atualizando pontos do mapa...",
+    "map.userLocationPriority": "Localiza\u00e7\u00e3o usada para priorizar avalia\u00e7\u00f5es pr\u00f3ximas",
     "reports.evaluationsTitle": "Relatório de Avaliações",
     "reports.evaluationName": "Nome da Avaliação",
     "reports.summary": "Resumo",
@@ -686,6 +716,21 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "map.sample": "Sample",
     "map.location": "Location",
     "map.region": "Region",
+    "map.loadingDescription": "Requesting location and loading an optimized set of evaluations.",
+    "map.locationMessage.allowed": "Showing up to {limit} evaluations per batch, prioritizing points near your location.",
+    "map.locationMessage.denied": "Showing up to {limit} evaluations per batch. Location permission was denied.",
+    "map.locationMessage.unavailable": "Showing up to {limit} evaluations per batch. Location is unavailable.",
+    "map.locationMessage.loading": "Searching evaluations for the map.",
+    "map.emptyFilter": "No evaluation found for this filter.",
+    "map.paginationRange": "Batch {start}-{end} of {total} evaluations",
+    "map.evaluationsPerBatch": "Evaluations per batch",
+    "map.batchTooltip": "This field controls how many evaluations are shown at a time on the map. Use the arrows beside it to navigate between batches.",
+    "map.previousBatch": "Previous batch",
+    "map.nextBatch": "Next batch",
+    "map.batchIndicator": "Batch {page} of {totalPages}",
+    "map.userLocationPopup": "Your approximate location",
+    "map.updatingPoints": "Updating map points...",
+    "map.userLocationPriority": "Location used to prioritize nearby evaluations",
     "reports.evaluationsTitle": "Evaluation Report",
     "reports.evaluationName": "Evaluation Name",
     "reports.summary": "Summary",
@@ -943,6 +988,21 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     "map.sample": "Muestra",
     "map.location": "Ubicación",
     "map.region": "Región",
+    "map.loadingDescription": "Solicitando ubicaci\u00f3n y cargando un conjunto optimizado de evaluaciones.",
+    "map.locationMessage.allowed": "Mostrando hasta {limit} evaluaciones por lote, priorizando puntos cercanos a tu ubicaci\u00f3n.",
+    "map.locationMessage.denied": "Mostrando hasta {limit} evaluaciones por lote. Ubicaci\u00f3n no permitida.",
+    "map.locationMessage.unavailable": "Mostrando hasta {limit} evaluaciones por lote. Ubicaci\u00f3n no disponible.",
+    "map.locationMessage.loading": "Buscando evaluaciones para el mapa.",
+    "map.emptyFilter": "No se encontr\u00f3 ninguna evaluaci\u00f3n para este filtro.",
+    "map.paginationRange": "Lote {start}-{end} de {total} evaluaciones",
+    "map.evaluationsPerBatch": "Evaluaciones por lote",
+    "map.batchTooltip": "Este campo controla cu\u00e1ntas evaluaciones se muestran por vez en el mapa. Usa las flechas al lado para navegar entre los lotes.",
+    "map.previousBatch": "Lote anterior",
+    "map.nextBatch": "Siguiente lote",
+    "map.batchIndicator": "Lote {page} de {totalPages}",
+    "map.userLocationPopup": "Tu ubicaci\u00f3n aproximada",
+    "map.updatingPoints": "Actualizando puntos del mapa...",
+    "map.userLocationPriority": "Ubicaci\u00f3n usada para priorizar evaluaciones cercanas",
     "reports.evaluationsTitle": "Informe de Evaluaciones",
     "reports.evaluationName": "Nombre de la Evaluación",
     "reports.summary": "Resumen",
